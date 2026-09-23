@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.7** - Componente File Input MD3: Input de archivo/imagen sin componente nativo MD3, 3 variantes (TextField File, DropZone, Button File), single/multiple, preview con chips e imagen, drag & drop, validación `accept`/`data-max-size`, estados error/disabled y API `file-selected`/`file-cleared`
 - **v1.6** - Componente Snackbar MD3: Notificaciones flotantes breves (neutral, success, error, warning, info), soporte para acción interactiva, auto-dismiss con pausa en hover y API dual (declarativa y RDM.snackbar.show)
 - **v1.5** - Componente Dialog MD3: Elemento nativo HTML5 dialog, 4 configuraciones (Basic, Icon, Selection, Full-screen), focus trap, backdrop animado y soporte para temas
 - **v1.4.1** - Search Bar refinements: state layers removidos, leading icon cambiado a search
@@ -612,7 +613,295 @@ RDM.snackbar.show({
 
 ---
 
+## File Input Component
+
+### Overview
+MD3 no define un componente nativo `input[type=file]`. RDM 2.0 lo compone combinando patrones oficiales de Google (Button + TextField readonly + DropZone) sobre un `<input type="file" hidden>`. Soporta subida de imágenes y archivos genéricos desde formularios, con validación, preview y drag & drop. Pensado para casos ManGo!: foto de producto, galería, ficha PDF y portafolio.
+
+**Archivos**:
+- [css/fileinput.css](css/fileinput.css) - Estilos (TextField + DropZone + chips/preview)
+- [fileinputs.php](fileinputs.php) - Demostración (3 variantes, 7 ejemplos)
+- [js/fileinput.js](js/fileinput.js) - Lógica de interacción y validación
+
+### Dimensiones (Material Design 3)
+
+- **TextField File**: 56dp alto (3.5em), padding 12dp (0.75em), iconos 24dp (1.5em), gap 16dp (1em), border-radius 4dp (0.25em), border 1dp outline
+- **DropZone**: min-height 160dp (10em), padding 32dp (2em) vertical, border-radius 12dp (0.75em), borde dashed 1.5px, icono circular 48dp (3em)
+- **Chips preview**: gap 8dp (0.5em), padding chip 5.6dp/12dp, icono chip 24dp, texto max 224dp (14em)
+- **Imagen preview**: max-height 224dp (14em), border-radius 12dp
+- **Transición**: 160ms ease (MD3 standard)
+
+### Anatomía
+
+```
+┌────────────────────────────────────────────────────────┐
+│ [🖼️]  imagen_producto.jpg          [☁️⬆️] / [✕]     │  TextField File: Leading + readonly field + trailing
+│ Imagen del producto                                    │  Label flotante + helper + counter
+│ PNG, JPG o WEBP — máx. 5MB              2.4 MB        │
+│ [🖼️ archivo.jpg ✕] [📄 doc.pdf ✕]                     │  Chips preview
+│ [━━━━━━━ Imagen preview ━━━━━━━]                       │  Imagen grande (solo single image)
+└────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────┐
+│              [☁️]                      │  DropZone: Icon + title + subtitle
+│   Arrastra tu imagen aquí              │  Borde dashed, hover primary
+│   o haz click para explorar            │
+│   PNG, JPG, WEBP (máx. 5MB)            │
+└────────────────────────────────────────┘
+
+[☁️ Subir imagen]  [📎 Adjuntar PDF]      Button File: label[for] + hidden input
+```
+
+### Configuraciones MD3
+
+#### 1. TextField File - Single (imagen o documento)
+Campo readonly que muestra el nombre del archivo, con leading icon contextual y trailing dinámico (upload → close). Ideal dentro de `rdm-form--body`.
+
+```html
+<div class="rdm-fileinput--wrapper" data-fileinput>
+  <div class="rdm-fileinput--container rdm-fileinput--outlined">
+    <div class="rdm-fileinput--control">
+      <div class="rdm-fileinput--leading-icon"><span class="material-symbols-rounded">image</span></div>
+      <input class="rdm-fileinput--field" type="text" readonly placeholder=" " id="fi_img">
+      <label class="rdm-fileinput--label" for="fi_img">Imagen del producto</label>
+      <button type="button" class="rdm-fileinput--trailing-icon" data-file-trigger aria-label="Subir"><span class="material-symbols-rounded">cloud_upload</span></button>
+      <button type="button" class="rdm-fileinput--trailing-icon" data-file-clear aria-label="Quitar"><span class="material-symbols-rounded">close</span></button>
+    </div>
+  </div>
+  <div class="rdm-fileinput--support"><span class="rdm-fileinput--support-text">PNG, JPG o WEBP — máx. 5MB</span><span class="rdm-fileinput--support-counter"></span></div>
+  <input type="file" class="rdm-fileinput--hidden" name="imagen" accept="image/*" data-max-size="5242880">
+  <div class="rdm-fileinput--preview"></div>
+  <img class="rdm-fileinput--image-preview" alt="Vista previa">
+</div>
+```
+
+#### 2. TextField File - Multiple (galería)
+Con `multiple` en el hidden. Muestra contador total y chips por archivo con botón de eliminación individual.
+
+```html
+<input type="file" class="rdm-fileinput--hidden" name="galeria[]" accept="image/*" multiple data-max-size="5242880">
+<!-- display muestra "3 archivo(s) seleccionado(s)" y chips debajo -->
+```
+
+#### 3. DropZone - Single / Multiple
+Tarjeta con borde dashed, icono circular `primary-container`, título y subtítulo. Hover y `is-dragover` cambian a `primary` con `color-mix 4%/8%`. Click o drag & drop disparan el picker. Usa el mismo hidden input y lógica de preview.
+
+```html
+<div class="rdm-fileinput--wrapper" data-fileinput>
+  <div class="rdm-fileinput--dropzone" role="button" tabindex="0">
+    <div class="rdm-fileinput--dropzone-icon"><span class="material-symbols-rounded">cloud_upload</span></div>
+    <div class="rdm-fileinput--dropzone-title">Arrastra tu imagen aquí</div>
+    <div class="rdm-fileinput--dropzone-subtitle">o haz click para explorar — PNG, JPG, WEBP (máx. 5MB)</div>
+  </div>
+  <input type="file" class="rdm-fileinput--hidden" name="drop_imagen" accept="image/*" data-max-size="5242880">
+  <div class="rdm-fileinput--preview"></div>
+  <img class="rdm-fileinput--image-preview" alt="Vista previa">
+</div>
+```
+
+#### 4. Button File (variante pura MD3)
+Sin wrapper. Patrón oficial Material Web: `input hidden + label` estilizado como `rdm-button`. Útil fuera de formularios (toolbars, cards).
+
+```html
+<input type="file" id="btn_file" class="rdm-fileinput--hidden" accept="image/*" data-file-display="btn_file_name">
+<label for="btn_file" class="rdm-button--outlined"><div class="rdm-button--container"><div class="rdm-button--media"><div class="rdm-button--icon"><span class="material-symbols-rounded">attach_file</span></div></div><div class="rdm-button--body"><span class="rdm-sys-typography--label-large">Adjuntar</span></div></div></label>
+<span id="btn_file_name" data-placeholder="Ningún archivo seleccionado">Ningún archivo seleccionado</span>
+```
+
+### Colores (MD3 Tokens)
+
+| Elemento | Token MD3 |
+|---|---|
+| **Borde Outlined** | `--md-sys-color-outline` → `on-surface` en hover → `primary` en focus + `inset 0 0 0 1px primary` |
+| **Label / Helper** | `--md-sys-color-on-surface-variant` → `primary` en focus/has-file → `error` en is-error |
+| **Texto archivo** | `--md-sys-color-on-surface` |
+| **Fondo DropZone** | `transparent` → `color-mix(primary 4%, transparent)` hover → `color-mix(primary 8%, surface)` dragover |
+| **Borde DropZone** | `outline` dashed → `primary` solid en hover/dragover → `error` en is-error |
+| **Icono DropZone** | `primary-container` bg + `on-primary-container` icon |
+| **Chip** | `surface-variant` bg + `on-surface-variant` text + `primary-container` icon |
+| **Imagen preview border** | `--md-sys-color-outline-variant` |
+
+### Estados
+
+#### Default (Enabled, Empty)
+- Display vacío, label centrado, trailing muestra `cloud_upload`, `close` oculto, helper visible, sin chips/imagen.
+
+#### Has File (Populated)
+- Wrapper con `.has-file`, display con nombre o "N archivo(s)", label flotante arriba (`scale 0.85`, `top -0.8em`, `primary`), trailing oculta upload y muestra close `.show`, counter con tamaño, chips generados, imagen preview si single `image/*`.
+
+#### Focused
+- `:focus-within` en outlined → `border primary + inset shadow`, label `primary`. Display y dropzone reciben `is-focused`/`focus-visible` outline.
+
+#### Hover
+- Outlined: `border on-surface`. DropZone: `border primary + bg primary 4%`. Chip remove: `bg on-surface 8%`.
+
+#### Dragover
+- DropZone con `.is-dragover`: `border primary solid + bg primary 8% + color primary`.
+
+#### Error
+- Wrapper `.is-error`: `border error`, `label/support error`, `helper` con mensaje "Archivo muy grande (X > Y)" o "Tipo no permitido". Focus mantiene `inset error`.
+
+#### Disabled
+- Wrapper `.is-disabled`: `opacity 0.65`, `pointer-events none` en dropzone y control, input `disabled`.
+
+### BEM Structure
+
+```
+.rdm-fileinput--wrapper[data-fileinput]   /* Bloque principal, estado has-file/is-error/is-disabled */
+├── --container --outlined                 /* Contenedor bordeado (TextField) */
+│   └── --control                         /* Flex 56dp alto */
+│       ├── --leading-icon                /* Icono contextual (image/description) */
+│       ├── --field (input[readonly])     /* Display nombre archivo */
+│       ├── --label (label)               /* Flotante con notch surface */
+│       ├── --trailing-icon[data-file-trigger] /* Upload (cloud_upload/attach_file) */
+│       └── --trailing-icon[data-file-clear]   /* Clear (close) .show con archivo */
+├── --support                             /* Helper + counter */
+│   ├── --support-text
+│   └── --support-counter
+├── --hidden (input[type=file])           /* Nativo oculto, accept/multiple/data-max-size */
+├── --preview                             /* Contenedor chips */
+│   └── --chip
+│       ├── --chip-icon
+│       ├── --chip-text
+│       └── --chip-remove (button)
+├── --image-preview (img)                 /* Vista previa grande .show */
+└── --dropzone (opcional)                 /* Variante tarjeta dashed */
+    ├── --dropzone-icon
+    ├── --dropzone-title
+    └── --dropzone-subtitle
+```
+
+### JavaScript API
+
+#### Inicialización automática
+```javascript
+// fileinput.js se ejecuta en DOMContentLoaded y maneja todos los [data-fileinput] automáticamente
+```
+
+#### Comportamientos automáticos
+1. **Trigger**: Click en display, `[data-file-trigger]` o dropzone → `hidden.click()`
+2. **Sincronización**: `change` del hidden → actualiza display, counter (`formatSize`), chips, imagen preview (`FileReader`), añade `.has-file`
+3. **Clear**: Click en `[data-file-clear]` o en `chip-remove` → usa `DataTransfer` para remover individual, limpia `value`, quita `.has-file`
+4. **Validación**: `accept` (extensiones y `image/*`) y `data-max-size` (bytes, default 5242880) → añade `.is-error` y helper con mensaje, limpia selección
+5. **Drag & Drop**: `dragenter/dragover` → `.is-dragover` en dropzone, `drop` → asigna files al hidden (respeta `multiple`)
+6. **Form reset**: Limpia files, preview, chips y errores automáticamente
+
+#### Eventos custom
+```javascript
+// Escuchar selección
+wrapper.addEventListener('file-selected', (e) => {
+  console.log('Archivos:', e.detail.files); // File[]
+});
+hidden.addEventListener('file-selected', (e) => { ... });
+
+// Escuchar limpieza
+wrapper.addEventListener('file-cleared', () => {
+  console.log('Archivos eliminados');
+});
+
+// Variante Button con display externo
+// <input data-file-display="idDelSpan">
+```
+
+#### Atributos HTML
+| Atributo | Ubicación | Descripción |
+|---|---|---|
+| `accept` | `input[type=file]` | Filtro MD3: `image/*`, `.pdf`, `application/pdf`, `.doc` |
+| `multiple` | `input[type=file]` | Permite múltiples archivos (chips) |
+| `data-max-size` | `input[type=file]` | Límite bytes por archivo (ej. `5242880` = 5MB) |
+| `data-fileinput` | `.rdm-fileinput--wrapper` | Marca wrapper para JS |
+| `data-file-trigger` | `button` | Dispara picker |
+| `data-file-clear` | `button` | Limpia selección |
+| `data-file-display` | `input[type=file]` | ID de span donde mostrar nombre (variante Button) |
+
+### Accesibilidad
+
+- **Hidden input nativo**: Mantiene semántica `type=file` para lectores y validación de formulario `enctype=multipart/form-data`
+- **Label flotante + aria-describedby**: Conectado a `support-text` para helper/error
+- **Botones con aria-label**: `Subir archivo` / `Quitar archivo` en trailing icons
+- **DropZone**: `role=button`, `tabindex=0`, `aria-label`, `aria-disabled`
+- **Focus visible**: Outline 2px `primary` en display y dropzone
+- **Teclado**: Enter/Space en dropzone dispara picker, Tab navega entre trigger/clear
+
+### Responsive
+
+- **Ancho**: 100% del `rdm-form--body` (max 600dp toolbar, 1400dp landing)
+- **Chips**: `flex-wrap` con `max-width 14em` y `ellipsis`
+- **Imagen preview**: `width 100%`, `max-height 14em`, `object-fit cover`
+
+### Transiciones
+
+Todas `160ms ease` (MD3):
+- `border-color`, `box-shadow`, `background-color`, `color` en outlined/dropzone
+- `transform` y `top` en label flotante
+- `opacity` en trailing icons y preview
+
+### Estados Avanzados
+
+#### Validación automática
+- Tipo: compara `accept` contra `file.type` y extensión
+- Tamaño: `file.size > data-max-size` → error
+
+#### Formato de tamaño
+- `formatSize`: B → KB → MB con 1 decimal (ej. `2.4 MB`)
+
+#### Integración con Reset
+- `form.addEventListener('reset')` limpia `files`, preview, chips y errores con `setTimeout 0`
+
+### Implementación Full HTML Example (Single imagen con DropZone + TextField)
+
+```html
+<form class="rdm-form--container" enctype="multipart/form-data">
+  <div class="rdm-form--outlined">
+    <div class="rdm-form--body">
+      <div class="rdm-fileinput--wrapper" data-fileinput>
+        <div class="rdm-fileinput--container rdm-fileinput--outlined">
+          <div class="rdm-fileinput--control">
+            <div class="rdm-fileinput--leading-icon"><span class="material-symbols-rounded">image</span></div>
+            <input class="rdm-fileinput--field" type="text" readonly placeholder=" " id="fi_demo">
+            <label class="rdm-fileinput--label" for="fi_demo">Imagen del producto</label>
+            <button type="button" class="rdm-fileinput--trailing-icon" data-file-trigger><span class="material-symbols-rounded">cloud_upload</span></button>
+            <button type="button" class="rdm-fileinput--trailing-icon" data-file-clear><span class="material-symbols-rounded">close</span></button>
+          </div>
+        </div>
+        <div class="rdm-fileinput--support"><span class="rdm-fileinput--support-text">PNG, JPG o WEBP — máx. 5MB</span><span class="rdm-fileinput--support-counter"></span></div>
+        <input type="file" class="rdm-fileinput--hidden" name="imagen" accept="image/*" data-max-size="5242880">
+        <div class="rdm-fileinput--preview"></div>
+        <img class="rdm-fileinput--image-preview" alt="Vista previa">
+      </div>
+    </div>
+  </div>
+</form>
+```
+
+### Testing Checklist
+
+- ✅ TextField single muestra nombre y tamaño, label flota, trailing cambia upload→close
+- ✅ TextField multiple muestra "N archivo(s)" + chips con eliminación individual (DataTransfer)
+- ✅ Single image genera preview `FileReader` 224dp alto
+- ✅ DropZone hover `primary 4%`, dragover `primary 8%` y dashed→solid
+- ✅ Validación `accept` rechaza tipo no permitido con `.is-error`
+- ✅ Validación `data-max-size` rechaza >5MB con mensaje "X > Y"
+- ✅ Counter muestra "2 archivo(s) • 4.8 MB" en multiple
+- ✅ Form `reset` limpia todo
+- ✅ Disabled `opacity 0.65` y `pointer-events none`
+- ✅ Responsive 100% y chips con ellipsis
+
+### Notas de Implementación
+
+1. **No estilizar el nativo**: Siempre `hidden + label/button` (patrón Material Web)
+2. **Place en form**: Requiere `enctype="multipart/form-data"` y `method="post"` para envío real
+3. **Dependencia**: Requiere `Material Symbols Rounded` y tokens `md/theme.css`
+4. **Solo un hidden por wrapper**: Si necesitas múltiples categorías, usa múltiples wrappers
+5. **Variante Button no necesita JS de wrapper**: Usa `data-file-display` para feedback
+
+---
+
 ## Componentes Relacionados
+
+### File Input
+- **Estado**: ✅ Implementado según estándar MD3 (v1.7) - 3 variantes (TextField, DropZone, Button)
+- **Ubicación**: [fileinputs.php](fileinputs.php) / [css/fileinput.css](css/fileinput.css) / [js/fileinput.js](js/fileinput.js)
 
 ### Snackbar
 - **Estado**: ✅ Implementado según estándar MD3 (v1.6)
@@ -644,4 +933,7 @@ RDM.snackbar.show({
 
 - [Material Design 3 - Search](https://m3.material.io/components/search/specs)
 - [Material Design 3 - Input](https://m3.material.io/components/text-fields/specs)
+- [Material Design 3 - Buttons](https://m3.material.io/components/buttons/specs) (patrón File Input: hidden + button)
+- [Material Web - File Upload](https://github.com/material-components/material-web) (md-filled-button + input hidden)
+- [MUI - File Upload Button](https://mui.com/material-ui/react-button/#file-upload)
 - [Material Symbols Icon Set](https://fonts.google.com/icons)
