@@ -2,6 +2,8 @@
 
 ## Historial de Versiones
 
+- **v1.6** - Componente Snackbar MD3: Notificaciones flotantes breves (neutral, success, error, warning, info), soporte para acción interactiva, auto-dismiss con pausa en hover y API dual (declarativa y RDM.snackbar.show)
+- **v1.5** - Componente Dialog MD3: Elemento nativo HTML5 dialog, 4 configuraciones (Basic, Icon, Selection, Full-screen), focus trap, backdrop animado y soporte para temas
 - **v1.4.1** - Search Bar refinements: state layers removidos, leading icon cambiado a search
 - **v1.4** - Search Bar 6 mejoras MD3: transiciones 160ms, keyboard nav, error states, helper text, cursor selection, active states
 - **v1.3** - Search Bar MD3 compliance complete (avatar, multiple trailing icons, leading button)
@@ -352,7 +354,273 @@ Detectado automáticamente por caracteres especiales (!@#$%^&*+=[]{}...etc)
 
 ---
 
+## Dialog Component
+
+### Overview
+Componente de diálogo modal basado en las especificaciones de Material Design 3 (MD3) y montado sobre el elemento nativo HTML5 `<dialog>`. Proporciona accesibilidad integrada (focus trap, soporte Escape, ARIA) y manejo de backdrop/scrim con animaciones fluidas.
+
+**Archivos**:
+- [css/dialog.css](css/dialog.css) - Estilos y animaciones
+- [dialogs.php](dialogs.php) - Demostración de las 4 variantes
+- [js/dialog.js](js/dialog.js) - Lógica de interacción
+
+### Dimensiones (Material Design 3)
+- **Ancho mínimo**: 280dp (17.5em)
+- **Ancho máximo**: 560dp (35em)
+- **Border radius**: 28dp (1.75em)
+- **Padding interno**: 24dp (1.5em)
+- **Hero Icon**: 32dp (2em)
+- **Gap de acciones**: 8dp (0.5em)
+- **Elevación**: Nivel 3 (box-shadow level 3)
+
+### Anatomía
+
+```
+┌─────────────────────────────────────────────┐
+│                   [ ⚠️ ]                     │  Hero Icon (opcional)
+│                                             │
+│            ¿Eliminar producto?              │  Headline (headline-small / title-large)
+│                                             │
+│ Esta acción no se puede deshacer. ¿Deseas   │  Supporting text (body-medium)
+│ continuar de todos modos?                   │
+│                                             │
+│                      [Cancelar]  [Eliminar] │  Actions (rdm-button)
+└─────────────────────────────────────────────┘
+```
+
+### Configuraciones MD3
+
+#### 1. Basic Alert Dialog
+Diálogo estándar para confirmaciones y alertas sin icono decorativo.
+```html
+<dialog class="rdm-dialog" id="dialog-basic">
+  <div class="rdm-dialog--container">
+    <div class="rdm-dialog--headline">
+      <h2 class="rdm-sys-typography--headline-small">Título</h2>
+    </div>
+    <div class="rdm-dialog--content">
+      <p class="rdm-sys-typography--body-medium">Mensaje informativo.</p>
+    </div>
+    <div class="rdm-dialog--actions">
+      <button type="button" class="rdm-button--text" data-dialog-close>Cancelar</button>
+      <button type="button" class="rdm-button--text" data-dialog-close>Aceptar</button>
+    </div>
+  </div>
+</dialog>
+```
+
+#### 2. Dialog con Icono (Hero Icon)
+Diálogo centrado para advertencias, acciones críticas o informativas con icono destacado.
+```html
+<dialog class="rdm-dialog" id="dialog-icon">
+  <div class="rdm-dialog--container">
+    <div class="rdm-dialog--icon is-error">
+      <span class="material-symbols-rounded">delete</span>
+    </div>
+    <div class="rdm-dialog--headline is-centered">
+      <h2 class="rdm-sys-typography--headline-small">Eliminar elemento</h2>
+    </div>
+    <div class="rdm-dialog--content is-centered">
+      <p class="rdm-sys-typography--body-medium">Detalle de la acción destructiva.</p>
+    </div>
+    <div class="rdm-dialog--actions">
+      <button type="button" class="rdm-button--text" data-dialog-close>Cancelar</button>
+      <button type="button" class="rdm-button--filled" data-dialog-close>Eliminar</button>
+    </div>
+  </div>
+</dialog>
+```
+
+#### 3. Confirmation Dialog con Selección
+Diálogo que incluye opciones desplazables (radio buttons o checkboxes).
+```html
+<dialog class="rdm-dialog" id="dialog-selection">
+  <div class="rdm-dialog--container">
+    <div class="rdm-dialog--headline">
+      <h2 class="rdm-sys-typography--headline-small">Elige una opción</h2>
+    </div>
+    <div class="rdm-dialog--content rdm-dialog--content-scrollable">
+      <!-- Radios / Checkboxes -->
+    </div>
+    <div class="rdm-dialog--actions">
+      <button type="button" class="rdm-button--text" data-dialog-close>Cancelar</button>
+      <button type="button" class="rdm-button--text" data-dialog-close>Guardar</button>
+    </div>
+  </div>
+</dialog>
+```
+
+#### 4. Full-screen Dialog
+Diálogo que ocupa el 100% de la pantalla para edición o formularios complejos.
+```html
+<dialog class="rdm-dialog rdm-dialog--fullscreen" id="dialog-fullscreen">
+  <div class="rdm-dialog--container">
+    <div class="rdm-dialog--fullscreen-header">
+      <button type="button" class="rdm-button--text" data-dialog-close>
+        <span class="material-symbols-rounded">close</span>
+      </button>
+      <h2 class="rdm-sys-typography--title-large">Título</h2>
+      <button type="button" class="rdm-button--filled" data-dialog-close>Guardar</button>
+    </div>
+    <div class="rdm-dialog--fullscreen-body">
+      <!-- Contenido extenso -->
+    </div>
+  </div>
+</dialog>
+```
+
+### Colores (MD3 Tokens)
+
+| Elemento | Token MD3 |
+|---|---|
+| **Fondo Contenedor** | `--md-sys-color-surface-container-high` |
+| **Texto Titular** | `--md-sys-color-on-surface` |
+| **Texto de Contenido** | `--md-sys-color-on-surface-variant` |
+| **Icono Secundario** | `--md-sys-color-secondary` |
+| **Icono de Error** | `--md-sys-color-error` |
+| **Scrim (Backdrop)** | `--md-sys-color-scrim` (opacidad 0.45) |
+| **Divisores** | `--md-sys-color-outline-variant` |
+
+### BEM Structure
+
+```
+.rdm-dialog                           /* Elemento nativo <dialog> */
+├── --container                       /* Contenedor central (28px border-radius) */
+│   ├── --icon                        /* Icono superior (opcional) */
+│   ├── --headline                    /* Titular del diálogo */
+│   ├── --content                     /* Cuerpo de texto / scrollable */
+│   └── --actions                     /* Barra inferior de botones */
+└── --fullscreen                      /* Modificador pantalla completa */
+    ├── --fullscreen-header           /* Barra superior */
+    └── --fullscreen-body             /* Contenido expandido */
+```
+
+### JavaScript API
+
+1. **Apertura declarativa:** Añadir `data-dialog-target="#idDelDialog"` a cualquier botón o enlace.
+2. **Cierre declarativo:** Añadir `data-dialog-close` a cualquier botón dentro o fuera del diálogo.
+3. **Cierre por Scrim:** Hacer clic fuera de `.rdm-dialog--container` cierra el diálogo automáticamente.
+4. **Navegación por teclado:** La tecla `Escape` cierra nativamente el diálogo y devuelve el foco.
+5. **Eventos custom:**
+   - `dialog-open`: Se emite en el elemento `<dialog>` al abrir.
+   - `dialog-close`: Se emite en el elemento `<dialog>` al cerrar.
+
+---
+
+## Snackbar Component
+
+### Overview
+Componente de notificación breve y flotante basado en las especificaciones de Material Design 3 (MD3). Emplea superficies invertidas (`inverse-surface`) para garantizar el máximo contraste y visibilidad sobre cualquier tema, con soporte para estados (neutral, success, error, warning, info), acciones interactivas y temporizador inteligente con pausa al pasar el cursor.
+
+**Archivos**:
+- [css/snackbar.css](css/snackbar.css) - Estilos y variantes de color
+- [snackbars.php](snackbars.php) - Demostración interactiva
+- [js/snackbar.js](js/snackbar.js) - API y lógica de animación/descarte
+
+### Dimensiones (Material Design 3)
+- **Altura mínima**: 48dp (3em)
+- **Ancho mínimo**: 320dp (20em)
+- **Ancho máximo**: 672dp (o 100% en pantallas móviles con margen 1em)
+- **Border radius**: 8dp (0.5em)
+- **Padding interno**: 12dp vertical (0.75em), 16dp horizontal (1em)
+- **Icono de estado**: 24dp (1.5em)
+- **Elevación**: Nivel 3 (box-shadow level 3)
+
+### Anatomía
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ [✓]  Producto guardado en el inventario   [DESHACER]  [✕]   │
+└─────────────────────────────────────────────────────────────┘
+  Icon   Body text                          Action      Close
+```
+
+### Configuraciones y Variantes MD3
+
+1. **Neutral / Informativo:**
+   - Superficie: `inverse-surface` con acento en color primario.
+2. **Éxito (Success):**
+   - Icono `check_circle` verde (#81C784) y borde lateral esmeralda (#4CAF50).
+3. **Error:**
+   - Icono `error` (#F2B8B5) y borde lateral de error (`--md-sys-color-error`).
+4. **Advertencia (Warning):**
+   - Icono `warning` (#FFB74D) y borde lateral ámbar (#FF9800).
+5. **Con Botón de Acción:**
+   - Incluye botón de texto interactivo para operaciones reversibles (ej. "Deshacer").
+
+### Colores (MD3 Tokens)
+
+| Elemento | Token MD3 |
+|---|---|
+| **Fondo Principal** | `--md-sys-color-inverse-surface` (`#313033` claro / `#E6E1E5` oscuro) |
+| **Texto Principal** | `--md-sys-color-inverse-on-surface` (`#F4EFF4` claro / `#313033` oscuro) |
+| **Botón de Acción** | `--md-sys-color-inverse-primary` (`#D0BCFF` claro / `#6750A4` oscuro) |
+| **Elevación** | Nivel 3 (sombra suave multi-capa) |
+
+### BEM Structure
+
+```
+.rdm-snackbar--wrapper                 /* Contenedor flotante fijado al pie */
+└── .rdm-snackbar                      /* Tarjeta de notificación */
+    ├── --media                        /* Contenedor de icono de estado */
+    ├── --body                         /* Mensaje de texto principal */
+    └── --actions                      /* Contenedor de acciones */
+        ├── --action-button            /* Botón de acción interactivo */
+        └── --close-button             /* Botón icono de descarte rápido */
+```
+
+### Modificadores de Estado
+- `.rdm-snackbar--neutral`
+- `.rdm-snackbar--success`
+- `.rdm-snackbar--error`
+- `.rdm-snackbar--warning`
+- `.rdm-snackbar--info`
+
+### JavaScript API
+
+#### 1. Uso Declarativo (HTML)
+Añadir atributos de datos a cualquier botón o disparador:
+```html
+<button 
+  type="button" 
+  data-snackbar-message="Producto guardado correctamente" 
+  data-snackbar-type="success"
+  data-snackbar-action="Deshacer"
+  data-snackbar-duration="5000"
+>
+  Guardar
+</button>
+```
+
+#### 2. Uso Programático (JavaScript)
+```javascript
+// Llamada rápida
+RDM.snackbar.show('Operación completada');
+
+// Configuración avanzada
+RDM.snackbar.show({
+  message: 'Elemento eliminado de la lista',
+  type: 'error', // 'neutral' | 'success' | 'error' | 'warning' | 'info'
+  duration: 5000, // milisegundos (0 para permanente hasta descarte)
+  actionText: 'Deshacer',
+  onAction: function() {
+    console.log('Acción deshacer ejecutada');
+  },
+  dismissible: true
+});
+```
+
+---
+
 ## Componentes Relacionados
+
+### Snackbar
+- **Estado**: ✅ Implementado según estándar MD3 (v1.6)
+- **Ubicación**: [snackbars.php](snackbars.php) / [css/snackbar.css](css/snackbar.css) / [js/snackbar.js](js/snackbar.js)
+
+### Dialog
+- **Estado**: ✅ Implementado según estándar MD3 (v1.5)
+- **Ubicación**: [dialogs.php](dialogs.php) / [css/dialog.css](css/dialog.css) / [js/dialog.js](js/dialog.js)
 
 ### Checkbox
 - **Estado**: ✅ Normalizado a estándar BEM
