@@ -210,6 +210,18 @@
 			</article>
 		</a>
 
+		<!-- Item -->
+		<a href="empty.php">
+			<article class="rdm-list--container">
+				<div class="rdm-list--media">
+					<div class="rdm-list--leading-icon"><span class="material-symbols-rounded">inbox</span></div>
+				</div>
+				<div class="rdm-list--body">
+					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Empty State</div></div>
+				</div>
+			</article>
+		</a>
+
 		<!-- COMPONENTES DE CONTENIDO -->
 
 		<!-- Item -->
