@@ -2,6 +2,8 @@
 
 ## Historial de Versiones
 
+- **v1.9** - Corrección de la capa de tokens: 60 referencias rotas (`-height` → `-line-height`, `-tracking` → `-letter-spacing`) que impedían aplicar line-height y letter-spacing en las 30 clases de tipografía; `font-weight` sin unidad px, `font-style` normalizado, `text-transform`/`text-decoration` añadidos y token `surface-dim` creado. **Alineación vertical de Lists alineada a M3** (one/two-line centrados, three-line+ top con leading y trailing sobre la primera línea) y alturas exactas 56/72/88dp
+- **v1.8** - Empty State (patrón M3: icono + headline + support + action, con a11y), Card con lista interna (`.rdm-card--list` ortogonal a los 3 tipos de card + variante `--divided`), y **alineación M3 de Lists**: alturas one-line 56dp / two-line 72dp / three-line 88dp, leading icon 24dp y state layers hover 8% / pressed 12%. File Input se simplifica a variante minimalista (label fijo sin transición) y la demo queda en 2 variantes
 - **v1.7** - Componente File Input MD3: Input de archivo/imagen sin componente nativo MD3, 3 variantes (TextField File, DropZone, Button File), single/multiple, preview con chips e imagen, drag & drop, validación `accept`/`data-max-size`, estados error/disabled y API `file-selected`/`file-cleared`
 - **v1.6** - Componente Snackbar MD3: Notificaciones flotantes breves (neutral, success, error, warning, info), soporte para acción interactiva, auto-dismiss con pausa en hover y API dual (declarativa y RDM.snackbar.show)
 - **v1.5** - Componente Dialog MD3: Elemento nativo HTML5 dialog, 4 configuraciones (Basic, Icon, Selection, Full-screen), focus trap, backdrop animado y soporte para temas
@@ -203,11 +205,9 @@ input.addEventListener('menu-open', () => {
 --md-sys-color-surface-container-high: /* Color base */
 --md-sys-color-on-surface: /* Texto e iconos */
 --md-sys-color-on-surface-variant: /* Placeholder e iconos secundarios */
-
-/* Elevaciones */
---md-sys-elevation-level1: /* Sombra default */
---md-sys-elevation-level3: /* Sombra focused */
 ```
+
+> **Nota (v1.8)**: las elevaciones de M3 **no están tokenizadas** en `css/md/tokens.css`. Cada CSS define su `box-shadow` literal. Los tokens `--md-sys-elevation-level1..5` quedan pendientes de añadirse a `tokens.css` para eliminar la duplicación.
 
 ### BEM Structure
 
@@ -616,46 +616,36 @@ RDM.snackbar.show({
 ## File Input Component
 
 ### Overview
-MD3 no define un componente nativo `input[type=file]`. RDM 2.0 lo compone combinando patrones oficiales de Google (Button + TextField readonly + DropZone) sobre un `<input type="file" hidden>`. Soporta subida de imágenes y archivos genéricos desde formularios, con validación, preview y drag & drop. Pensado para casos ManGo!: foto de producto, galería, ficha PDF y portafolio.
+MD3 no define un componente nativo `input[type=file]`. RDM 2.0 lo compone con el patrón oficial de Google (TextField readonly + `<input type="file" hidden>`). Soporta subida de imágenes y documentos desde formularios, con validación, vista previa y limpieza. Pensado para casos ManGo!: foto de producto y ficha PDF.
+
+> **v1.8 — Alcance reducido a minimalista.** La demo expone solo 2 variantes (imagen y documento). El label es **fijo sobre el notch** (sin transición placeholder→etiqueta) porque en un campo `readonly` esa animación no aporta información. El CSS conserva internamente el soporte de `multiple`, `dropzone` y chips para uso futuro, pero no se demuestra.
 
 **Archivos**:
-- [css/fileinput.css](css/fileinput.css) - Estilos (TextField + DropZone + chips/preview)
-- [fileinputs.php](fileinputs.php) - Demostración (3 variantes, 7 ejemplos)
+- [css/fileinput.css](css/fileinput.css) - Estilos (TextField + chips/preview)
+- [fileinputs.php](fileinputs.php) - Demostración (2 variantes: imagen, documento)
 - [js/fileinput.js](js/fileinput.js) - Lógica de interacción y validación
 
 ### Dimensiones (Material Design 3)
 
 - **TextField File**: 56dp alto (3.5em), padding 12dp (0.75em), iconos 24dp (1.5em), gap 16dp (1em), border-radius 4dp (0.25em), border 1dp outline
-- **DropZone**: min-height 160dp (10em), padding 32dp (2em) vertical, border-radius 12dp (0.75em), borde dashed 1.5px, icono circular 48dp (3em)
-- **Chips preview**: gap 8dp (0.5em), padding chip 5.6dp/12dp, icono chip 24dp, texto max 224dp (14em)
-- **Imagen preview**: max-height 224dp (14em), border-radius 12dp
+- **Label**: fijo en `top -0.8em`, `scale 0.85`, `left 1em`, padding 0.25em (notch sobre `surface`)
+- **Imagen preview**: max-height 224dp (14em), border-radius 12dp (0.75em)
 - **Transición**: 160ms ease (MD3 standard)
 
 ### Anatomía
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│ [🖼️]  imagen_producto.jpg          [☁️⬆️] / [✕]     │  TextField File: Leading + readonly field + trailing
-│ Imagen del producto                                    │  Label flotante + helper + counter
-│ PNG, JPG o WEBP — máx. 5MB              2.4 MB        │
-│ [🖼️ archivo.jpg ✕] [📄 doc.pdf ✕]                     │  Chips preview
-│ [━━━━━━━ Imagen preview ━━━━━━━]                       │  Imagen grande (solo single image)
+│ Imagen del producto    [imagen.jpg 2.4 MB]      [✕]   │  Label fijo (notch) + readonly field + clear
+│ PNG, JPG o WEBP — máx. 5MB                            │  Helper (support-text)
+│ [━━━━━━━ Imagen preview ━━━━━━━]                       │  Vista previa (solo single image/*)
 └────────────────────────────────────────────────────────┘
-
-┌────────────────────────────────────────┐
-│              [☁️]                      │  DropZone: Icon + title + subtitle
-│   Arrastra tu imagen aquí              │  Borde dashed, hover primary
-│   o haz click para explorar            │
-│   PNG, JPG, WEBP (máx. 5MB)            │
-└────────────────────────────────────────┘
-
-[☁️ Subir imagen]  [📎 Adjuntar PDF]      Button File: label[for] + hidden input
 ```
 
-### Configuraciones MD3
+### Configuraciones
 
-#### 1. TextField File - Single (imagen o documento)
-Campo readonly que muestra el nombre del archivo, con leading icon contextual y trailing dinámico (upload → close). Ideal dentro de `rdm-form--body`.
+#### Variante 1: Single imagen
+Filtra `image/*` y genera vista previa con `FileReader` al seleccionar.
 
 ```html
 <div class="rdm-fileinput--wrapper" data-fileinput>
@@ -675,37 +665,24 @@ Campo readonly que muestra el nombre del archivo, con leading icon contextual y 
 </div>
 ```
 
-#### 2. TextField File - Multiple (galería)
-Con `multiple` en el hidden. Muestra contador total y chips por archivo con botón de eliminación individual.
-
-```html
-<input type="file" class="rdm-fileinput--hidden" name="galeria[]" accept="image/*" multiple data-max-size="5242880">
-<!-- display muestra "3 archivo(s) seleccionado(s)" y chips debajo -->
-```
-
-#### 3. DropZone - Single / Multiple
-Tarjeta con borde dashed, icono circular `primary-container`, título y subtítulo. Hover y `is-dragover` cambian a `primary` con `color-mix 4%/8%`. Click o drag & drop disparan el picker. Usa el mismo hidden input y lógica de preview.
+#### Variante 2: Single documento
+Misma estructura, `accept` restringido y sin vista previa de imagen.
 
 ```html
 <div class="rdm-fileinput--wrapper" data-fileinput>
-  <div class="rdm-fileinput--dropzone" role="button" tabindex="0">
-    <div class="rdm-fileinput--dropzone-icon"><span class="material-symbols-rounded">cloud_upload</span></div>
-    <div class="rdm-fileinput--dropzone-title">Arrastra tu imagen aquí</div>
-    <div class="rdm-fileinput--dropzone-subtitle">o haz click para explorar — PNG, JPG, WEBP (máx. 5MB)</div>
+  <div class="rdm-fileinput--container rdm-fileinput--outlined">
+    <div class="rdm-fileinput--control">
+      <div class="rdm-fileinput--leading-icon"><span class="material-symbols-rounded">description</span></div>
+      <input class="rdm-fileinput--field" type="text" readonly placeholder=" " id="fi_doc" aria-describedby="fi_doc_help">
+      <label class="rdm-fileinput--label" for="fi_doc">Ficha técnica (PDF)</label>
+      <button type="button" class="rdm-fileinput--trailing-icon" data-file-trigger aria-label="Subir archivo"><span class="material-symbols-rounded">attach_file</span></button>
+      <button type="button" class="rdm-fileinput--trailing-icon" data-file-clear aria-label="Quitar archivo"><span class="material-symbols-rounded">close</span></button>
+    </div>
   </div>
-  <input type="file" class="rdm-fileinput--hidden" name="drop_imagen" accept="image/*" data-max-size="5242880">
+  <div class="rdm-fileinput--support"><span class="rdm-fileinput--support-text" id="fi_doc_help">Solo PDF — máx. 10MB</span><span class="rdm-fileinput--support-counter"></span></div>
+  <input type="file" class="rdm-fileinput--hidden" name="ficha_pdf" accept=".pdf,application/pdf" data-max-size="10485760">
   <div class="rdm-fileinput--preview"></div>
-  <img class="rdm-fileinput--image-preview" alt="Vista previa">
 </div>
-```
-
-#### 4. Button File (variante pura MD3)
-Sin wrapper. Patrón oficial Material Web: `input hidden + label` estilizado como `rdm-button`. Útil fuera de formularios (toolbars, cards).
-
-```html
-<input type="file" id="btn_file" class="rdm-fileinput--hidden" accept="image/*" data-file-display="btn_file_name">
-<label for="btn_file" class="rdm-button--outlined"><div class="rdm-button--container"><div class="rdm-button--media"><div class="rdm-button--icon"><span class="material-symbols-rounded">attach_file</span></div></div><div class="rdm-button--body"><span class="rdm-sys-typography--label-large">Adjuntar</span></div></div></label>
-<span id="btn_file_name" data-placeholder="Ningún archivo seleccionado">Ningún archivo seleccionado</span>
 ```
 
 ### Colores (MD3 Tokens)
@@ -713,78 +690,66 @@ Sin wrapper. Patrón oficial Material Web: `input hidden + label` estilizado com
 | Elemento | Token MD3 |
 |---|---|
 | **Borde Outlined** | `--md-sys-color-outline` → `on-surface` en hover → `primary` en focus + `inset 0 0 0 1px primary` |
-| **Label / Helper** | `--md-sys-color-on-surface-variant` → `primary` en focus/has-file → `error` en is-error |
+| **Label / Helper** | `--md-sys-color-on-surface-variant` → `primary` en focus → `error` en is-error |
+| **Notch del label** | `background-color: var(--md-sys-color-surface)` |
 | **Texto archivo** | `--md-sys-color-on-surface` |
-| **Fondo DropZone** | `transparent` → `color-mix(primary 4%, transparent)` hover → `color-mix(primary 8%, surface)` dragover |
-| **Borde DropZone** | `outline` dashed → `primary` solid en hover/dragover → `error` en is-error |
-| **Icono DropZone** | `primary-container` bg + `on-primary-container` icon |
 | **Chip** | `surface-variant` bg + `on-surface-variant` text + `primary-container` icon |
 | **Imagen preview border** | `--md-sys-color-outline-variant` |
+| **Disabled** | opacidad 0.65 + `pointer-events: none` |
 
 ### Estados
 
 #### Default (Enabled, Empty)
-- Display vacío, label centrado, trailing muestra `cloud_upload`, `close` oculto, helper visible, sin chips/imagen.
+- Campo vacío, label fijo sobre el notch, trailing muestra `cloud_upload`, `close` oculto, helper visible, sin vista previa.
 
 #### Has File (Populated)
-- Wrapper con `.has-file`, display con nombre o "N archivo(s)", label flotante arriba (`scale 0.85`, `top -0.8em`, `primary`), trailing oculta upload y muestra close `.show`, counter con tamaño, chips generados, imagen preview si single `image/*`.
+- Wrapper con `.has-file`, campo con el nombre del archivo, counter con el tamaño, `close` visible (`.show`), `cloud_upload` oculto, vista previa generada si es `image/*` single.
 
 #### Focused
-- `:focus-within` en outlined → `border primary + inset shadow`, label `primary`. Display y dropzone reciben `is-focused`/`focus-visible` outline.
+- `:focus-within` en outlined → `border primary + inset shadow`. El label cambia a `primary` **sin moverse** (no hay transición de posición).
 
 #### Hover
-- Outlined: `border on-surface`. DropZone: `border primary + bg primary 4%`. Chip remove: `bg on-surface 8%`.
-
-#### Dragover
-- DropZone con `.is-dragover`: `border primary solid + bg primary 8% + color primary`.
+- Outlined: `border on-surface`.
 
 #### Error
 - Wrapper `.is-error`: `border error`, `label/support error`, `helper` con mensaje "Archivo muy grande (X > Y)" o "Tipo no permitido". Focus mantiene `inset error`.
 
 #### Disabled
-- Wrapper `.is-disabled`: `opacity 0.65`, `pointer-events none` en dropzone y control, input `disabled`.
+- Wrapper `.is-disabled`: `opacity 0.65`, `pointer-events none`, input `disabled`.
 
 ### BEM Structure
 
 ```
-.rdm-fileinput--wrapper[data-fileinput]   /* Bloque principal, estado has-file/is-error/is-disabled */
+.rdm-fileinput--wrapper[data-fileinput]   /* Bloque: has-file / is-error / is-disabled */
 ├── --container --outlined                 /* Contenedor bordeado (TextField) */
 │   └── --control                         /* Flex 56dp alto */
 │       ├── --leading-icon                /* Icono contextual (image/description) */
-│       ├── --field (input[readonly])     /* Display nombre archivo */
-│       ├── --label (label)               /* Flotante con notch surface */
+│       ├── --field (input[readonly])     /* Nombre + tamaño */
+│       ├── --label                       /* Fijo sobre notch, scale 0.85 */
 │       ├── --trailing-icon[data-file-trigger] /* Upload (cloud_upload/attach_file) */
 │       └── --trailing-icon[data-file-clear]   /* Clear (close) .show con archivo */
 ├── --support                             /* Helper + counter */
 │   ├── --support-text
 │   └── --support-counter
-├── --hidden (input[type=file])           /* Nativo oculto, accept/multiple/data-max-size */
-├── --preview                             /* Contenedor chips */
-│   └── --chip
-│       ├── --chip-icon
-│       ├── --chip-text
-│       └── --chip-remove (button)
-├── --image-preview (img)                 /* Vista previa grande .show */
-└── --dropzone (opcional)                 /* Variante tarjeta dashed */
-    ├── --dropzone-icon
-    ├── --dropzone-title
-    └── --dropzone-subtitle
+├── --hidden (input[type=file])           /* Nativo oculto: accept / data-max-size */
+├── --preview                             /* Contenedor chips (soporte interno) */
+│   └── --chip → --chip-icon / --chip-text / --chip-remove
+└── --image-preview (img)                 /* Vista previa .show */
 ```
 
 ### JavaScript API
 
 #### Inicialización automática
 ```javascript
-// fileinput.js se ejecuta en DOMContentLoaded y maneja todos los [data-fileinput] automáticamente
+// fileinput.js en DOMContentLoaded maneja todos los [data-fileinput]
 ```
 
 #### Comportamientos automáticos
-1. **Trigger**: Click en display, `[data-file-trigger]` o dropzone → `hidden.click()`
-2. **Sincronización**: `change` del hidden → actualiza display, counter (`formatSize`), chips, imagen preview (`FileReader`), añade `.has-file`
-3. **Clear**: Click en `[data-file-clear]` o en `chip-remove` → usa `DataTransfer` para remover individual, limpia `value`, quita `.has-file`
-4. **Validación**: `accept` (extensiones y `image/*`) y `data-max-size` (bytes, default 5242880) → añade `.is-error` y helper con mensaje, limpia selección
-5. **Drag & Drop**: `dragenter/dragover` → `.is-dragover` en dropzone, `drop` → asigna files al hidden (respeta `multiple`)
-6. **Form reset**: Limpia files, preview, chips y errores automáticamente
+1. **Trigger**: Click en el campo o en `[data-file-trigger]` → `hidden.click()`
+2. **Sincronización**: `change` → actualiza campo, counter (`formatSize`), vista previa (`FileReader`), añade `.has-file`
+3. **Clear**: Click en `[data-file-clear]` → limpia `value`, quita `.has-file`, refocaliza
+4. **Validación**: `accept` (extensiones y `image/*`) y `data-max-size` (bytes, default 5242880) → `.is-error` + mensaje, limpia la selección
+5. **Form reset**: Limpia archivo, vista previa y errores automáticamente
 
 #### Eventos custom
 ```javascript
@@ -806,35 +771,29 @@ wrapper.addEventListener('file-cleared', () => {
 #### Atributos HTML
 | Atributo | Ubicación | Descripción |
 |---|---|---|
-| `accept` | `input[type=file]` | Filtro MD3: `image/*`, `.pdf`, `application/pdf`, `.doc` |
-| `multiple` | `input[type=file]` | Permite múltiples archivos (chips) |
-| `data-max-size` | `input[type=file]` | Límite bytes por archivo (ej. `5242880` = 5MB) |
-| `data-fileinput` | `.rdm-fileinput--wrapper` | Marca wrapper para JS |
-| `data-file-trigger` | `button` | Dispara picker |
-| `data-file-clear` | `button` | Limpia selección |
-| `data-file-display` | `input[type=file]` | ID de span donde mostrar nombre (variante Button) |
+| `accept` | `input[type=file]` | Filtro: `image/*`, `.pdf`, `application/pdf` |
+| `data-max-size` | `input[type=file]` | Límite en bytes (ej. `5242880` = 5MB) |
+| `data-fileinput` | `.rdm-fileinput--wrapper` | Marca el wrapper para JS |
+| `data-file-trigger` | `button` | Dispara el picker |
+| `data-file-clear` | `button` | Limpia la selección |
 
 ### Accesibilidad
 
-- **Hidden input nativo**: Mantiene semántica `type=file` para lectores y validación de formulario `enctype=multipart/form-data`
-- **Label flotante + aria-describedby**: Conectado a `support-text` para helper/error
-- **Botones con aria-label**: `Subir archivo` / `Quitar archivo` en trailing icons
-- **DropZone**: `role=button`, `tabindex=0`, `aria-label`, `aria-disabled`
-- **Focus visible**: Outline 2px `primary` en display y dropzone
-- **Teclado**: Enter/Space en dropzone dispara picker, Tab navega entre trigger/clear
+- **Hidden input nativo**: conserva semántica `type=file` y funciona con `enctype=multipart/form-data"`
+- **Label + `aria-describedby`**: conectado a `support-text` para leer el helper o el error
+- **Botones con `aria-label`**: "Subir archivo" / "Quitar archivo"
+- **Focus visible**: outline 2px `primary` heredado de `estilos.css`
+- **Teclado**: el campo es `readonly` pero enfocable; Tab recorre campo → trigger → clear
 
 ### Responsive
 
-- **Ancho**: 100% del `rdm-form--body` (max 600dp toolbar, 1400dp landing)
-- **Chips**: `flex-wrap` con `max-width 14em` y `ellipsis`
-- **Imagen preview**: `width 100%`, `max-height 14em`, `object-fit cover`
+- **Ancho**: 100% del contenedor (max 600dp en toolbar, 1400dp en landing)
+- **Vista previa**: `width 100%`, `max-height 14em`, `object-fit cover`
 
 ### Transiciones
 
-Todas `160ms ease` (MD3):
-- `border-color`, `box-shadow`, `background-color`, `color` en outlined/dropzone
-- `transform` y `top` en label flotante
-- `opacity` en trailing icons y preview
+Todas `160ms ease`: `border-color`, `box-shadow` y `color` (label, iconos).
+**El label no transiciona posición** — decisión de diseño v1.8.
 
 ### Estados Avanzados
 
@@ -848,7 +807,7 @@ Todas `160ms ease` (MD3):
 #### Integración con Reset
 - `form.addEventListener('reset')` limpia `files`, preview, chips y errores con `setTimeout 0`
 
-### Implementación Full HTML Example (Single imagen con DropZone + TextField)
+### Implementación Full HTML Example (Single imagen)
 
 ```html
 <form class="rdm-form--container" enctype="multipart/form-data">
@@ -876,31 +835,318 @@ Todas `160ms ease` (MD3):
 
 ### Testing Checklist
 
-- ✅ TextField single muestra nombre y tamaño, label flota, trailing cambia upload→close
-- ✅ TextField multiple muestra "N archivo(s)" + chips con eliminación individual (DataTransfer)
-- ✅ Single image genera preview `FileReader` 224dp alto
-- ✅ DropZone hover `primary 4%`, dragover `primary 8%` y dashed→solid
+- ✅ El campo muestra nombre y tamaño, y el counter refleja el peso
+- ✅ `cloud_upload` visible en vacío, `close` visible con archivo
+- ✅ La vista previa aparece solo en single `image/*`
 - ✅ Validación `accept` rechaza tipo no permitido con `.is-error`
 - ✅ Validación `data-max-size` rechaza >5MB con mensaje "X > Y"
-- ✅ Counter muestra "2 archivo(s) • 4.8 MB" en multiple
-- ✅ Form `reset` limpia todo
+- ✅ El label queda fijo sobre el notch sin transición
+- ✅ El `close` no tiene borde ni sombra (igual que textfield)
+- ✅ El `reset` del form limpia todo
 - ✅ Disabled `opacity 0.65` y `pointer-events none`
-- ✅ Responsive 100% y chips con ellipsis
 
 ### Notas de Implementación
 
-1. **No estilizar el nativo**: Siempre `hidden + label/button` (patrón Material Web)
-2. **Place en form**: Requiere `enctype="multipart/form-data"` y `method="post"` para envío real
-3. **Dependencia**: Requiere `Material Symbols Rounded` y tokens `md/theme.css`
-4. **Solo un hidden por wrapper**: Si necesitas múltiples categorías, usa múltiples wrappers
-5. **Variante Button no necesita JS de wrapper**: Usa `data-file-display` para feedback
+1. **No estilizar el nativo**: siempre `hidden + label/botón` (patrón Material Web)
+2. **Requiere `enctype="multipart/form-data"`** y `method="post"` para envío real
+3. **El label fijo es intencionado**: en un campo `readonly` la transición placeholder→notch no aporta información
+4. **Los botones no heredan estilos de `button.css`**: se fuerzan `border-radius 0`, `box-shadow none`, `background transparent`
+
+---
+
+## Empty State Component
+
+### Overview
+Patrón M3 para búsquedas sin resultados y colecciones vacías. **MD3 no lo define como component spec oficial** (`m3.material.io/components`): es un patrón de guía compuesto por ilustración o icono + headline + supporting text + acción opcional. RDM lo implementa sin card, centrado sobre `surface`.
+
+**Archivos**:
+- [css/empty.css](css/empty.css) - Estilos
+- [empty.php](empty.php) - Demostración (3 contextos)
+
+### Dimensiones
+- **Ancho máximo**: 512px (32em) — dentro del rango legible de M3
+- **Icono**: 64px (4em) con `line-height: 1`
+- **Padding vertical**: 48px (3em)
+- **Gap entre bloques**: 12px (0.75em)
+
+### Anatomía
+
+```
+┌────────────────────────────────────────┐
+│              [🖼️]                      │  --icon (on-surface-variant)
+│   Sin resultados para "metallica"      │  --headline (title-large, on-surface)
+│   Revisa la ortografía o intenta...   │  --support (body-medium, on-surface-variant)
+│         [ Limpiar búsqueda ]           │  --actions (rdm-button)
+└────────────────────────────────────────┘
+```
+
+### Colores (MD3 Tokens)
+
+| Elemento | Token MD3 |
+|---|---|
+| **Icono** | `--md-sys-color-on-surface-variant` con `opacity 0.6` |
+| **Headline** | `--md-sys-color-on-surface` |
+| **Supporting text** | `--md-sys-color-on-surface-variant` |
+| **Contenedor** | Sin fondo (transparent sobre `surface` del body) |
+
+### BEM Structure
+
+```
+.rdm-empty--container      /* Flex column, centrado, max-width 32em */
+├── --icon                 /* 4em circular flex, on-surface-variant */
+├── --headline             /* title-large, on-surface */
+├── --support              /* body-medium, on-surface-variant, max 28em */
+└── --actions              /* Flex row centered, gap 0.5em, wrap */
+```
+
+### Accesibilidad
+
+- **Pendiente (v1.9)**: falta `role="status"` + `aria-live="polite"` para empty states dinámicos (carga AJAX), y `aria-labelledby` enlazando el headline
+- **Pendiente (v1.9)**: el icono decorativo no tiene `aria-hidden="true"`
+
+### Limitaciones conocidas
+
+- No hay variante de ilustración (solo icono)
+- No hay estado de error (permiso denegado / red caída)
+- `margin-top: 2em` del icono más `padding: 3em` del contenedor produce bastante aire vertical
+- `opacity: 0.6` es un valor de diseño, no un token M3
+
+### Notas de Implementación
+
+1. Combinar con `rdm-button--filled` para la acción principal y `rdm-button--text` para secundarias
+2. Mantener el supporting text en `body-medium`; el headline nunca debe superar `title-large` en este patrón
+
+---
+
+## Card con lista interna
+
+### Overview
+Extensión del componente Card que permite anidar un `rdm-list--container` dentro de `rdm-card--body` con los items alineados a los bordes de la card (bleed-to-edge) mientras el texto conserva la alineación interna. Ideal para vistas de detalle (datos clave-valor, equipo, sedes).
+
+**No es un component spec de M3.** M3 no define "list inside card"; es un patrón propio de RDM derivado de las Settings de Android. Debe documentarse como decisión de diseño, no como cumplimiento de spec.
+
+**Archivos**:
+- [css/cardlist.css](css/cardlist.css) - Estilos del modificador
+- [cardlist.php](cardlist.php) - Demostración (11 variantes)
+
+### Dimensiones
+- **Padding de items**: 16px (1em) — coincide con el padding de `rdm-card--body`
+- **Separación entre items**: 12px (0.75em) o divisor de 1px `outline-variant`
+- **Bleed**: márgenes negativos de -16px (`-1em`) compensando el padding de la card
+
+### Ortogonalidad con tipos de Card
+
+El modificador `.rdm-card--list` es ortogonal y funciona con cualquier tipo:
+- `rdm-card--elevated rdm-card--list`
+- `rdm-card--filled rdm-card--list`
+- `rdm-card--outlined rdm-card--list`
+
+### Variante con divisores
+
+`rdm-card--list--divided` reemplaza el `margin-top` por `padding-top` + `border-top: 1px solid outline-variant` (spec Divider de M3).
+
+### Colores (MD3 Tokens)
+
+| Elemento | Token MD3 |
+|---|---|
+| **Divisor** | `--md-sys-color-outline-variant` 1px (0.0625em) |
+| **Fondo** | Hereda del tipo de card (elevated/filled/outlined) |
+
+### BEM Structure
+
+```
+.rdm-card--list                    /* Modificador ortogonal sobre rdm-card--* */
+├── .rdm-card--body                /* Body normal, padding 1em */
+│   └── .rdm-list--container       /* Items con margin -1em y padding 1em */
+└── .rdm-card--list--divided       /* Variante con divisores */
+```
+
+### Notas de Implementación
+
+1. El bleed-to-edge usa márgenes negativos; si cambia el padding de `rdm-card--body`, actualizar `-1em` en `cardlist.css`
+2. `.rdm-card--list .rdm-list--body { margin-right: 0 }` neutraliza el margen del body de lista para conservar el padding de la card
+3. El orden de import importa: `list.css` debe cargarse **antes** que `cardlist.css` en `estilos.css` por especificidad
+4. **Pendiente (v1.9)**: los pares clave-valor usan `body-headline` para la etiqueta y `body-suporting-text` para el valor, lo que invierte la jerarquía semántica de M3 (el valor debería ser el primario). Considerar un patrón dedicado
+
+### Testing Checklist
+
+- ✅ Funciona con elevated, filled y outlined
+- ✅ Los items llegan al borde de la card sin perder alineación de texto
+- ✅ `--divided` dibuja divisores `outline-variant` de 1px
+- ✅ El último item no tiene separación inferior extra
+- ✅ Reusa las alturas M3 de `rdm-list--container` (56/72/88dp)
+
+---
+
+## Lists Component (base)
+
+### Alturas según M3
+
+Detectadas automáticamente con `:has()` sobre la cantidad de hijos en `.rdm-list--body`, sin clases modificadoras. El **padding vertical varía por variante** para cerrar la cuenta exacta:
+
+| Variante | Selector | Padding | Contenido | Total |
+|---|---|---|---|---|
+| **one-line** | (default) | 16+16 | 24 | **56dp** |
+| **two-line** | `:has(.rdm-list--body > :nth-child(2))` | 14+14 | 24+20 | **72dp** |
+| **three-line+** | `:has(.rdm-list--body > :nth-child(3))` | 16+16 | 68 (mín.) | **100dp** |
+
+`:nth-child(3)` también matchea 4+ hijos, así que "three-line o superior" queda cubierta.
+
+**Requisito crítico:** `.rdm-list--container` requiere `box-sizing: border-box`. Sin él, `min-height` se aplica al content box y las alturas quedan infladas por el padding.
+
+**Ojo con el three-line:** los 88dp de M3 asumen 3 líneas cortas y sin wrap. En la práctica el supporting suele envolver a varias líneas, el body crece y el ítem crece con él. Por eso su `min-height` es `5.5em` pero su padding es cómodo (16dp), **no exprimido para cuadrar 88dp**. Intentar cerrar la cuenta exacta con padding asimétrico (16/4) dejaba el leading pegado al borde y se veía mal en los ítems largos.
+
+### Alineación vertical (M3 v1.9)
+
+El contenedor de 1 y 2 líneas centra sus elementos; en 3 o más líneas el leading **y** el trailing se anclan arriba, alineados con el inicio de la primera línea de texto.
+
+| Variante | `--media` / `--action` | `--body` |
+|---|---|---|
+| one-line | `align-items: center` | `align-self: center` |
+| two-line | `align-items: center` | `align-self: center` |
+| three-line+ | `align-self: flex-start` | `align-self: flex-start` |
+
+**No se usa ninguna transformación vertical.** Se intentó `translateY(calc(0.75em - 50%))` para centrar el elemento de 40dp sobre la primera línea, pero obligaba a reducir el padding superior y dejaba el leading a 2-8px del borde. `align-self: flex-start` con padding cómodo de 16dp da el mismo resultado visual sin números frágiles:
+
+```
+ ┌────────────────────────── three-line ───────────────────────────┐
+ │  16dp ↑ padding-top                                             │
+ │      ┌──────────┐   Headline           ← 1ª línea (y=16..40)    │
+ │      │  avatar  │   Lorem ipsum… (4 líneas)                      │
+ │  16dp│   40dp   │   $10.500                                      │
+ │      └──────────┘                                                │
+ │  16dp ↓ padding-bottom                                           │
+ └──────────────────────────────────────────────────────────────────┘
+```
+
+El avatar queda a 16dp del borde y con su borde superior alineado al inicio de la 1ª línea. El ítem crece si el supporting envuelve: `min-height: 5.5em` es un mínimo, no un alto fijo.
+
+```css
+.rdm-list--container:has(.rdm-list--body > :nth-child(3)) .rdm-list--body,
+.rdm-list--container:has(.rdm-list--body > :nth-child(3)) .rdm-list--media,
+.rdm-list--container:has(.rdm-list--body > :nth-child(3)) .rdm-list--action {
+  align-self: flex-start;
+}
+```
+
+### Leading image de 56dp
+
+Un `.rdm-list--leading-image` (56dp) implica un ítem de **88dp** según M3, independientemente del número de líneas:
+
+```css
+.rdm-list--container:has(> .rdm-list--media .rdm-list--leading-image) {
+  min-height: 5.5em;  /* 88dp */
+}
+```
+
+Va al final del bloque para ganar por orden de fuente (misma especificidad).
+
+### Tipografía de los items (determinista)
+
+Las alturas solo son exactas si el texto tiene line-height fijo, así que `.rdm-list--body-headline` y `--body-suporting-text` declaran su propia tipografía y **no dependen** de que el autor los envuelva en `rdm-sys-typography--*`:
+
+| Elemento | Token | Tamaño / line-height |
+|---|---|---|
+| `.rdm-list--body-headline` | `body-large` | 16px / 24px |
+| `.rdm-list--body-suporting-text` | `body-medium` | 14px / 20px |
+
+Ambos con `margin: 0` (los márgenes ad-hoc `0.09em` / `0.04em` de v1.7 sumaban ~6px y rompían la cuenta).
+
+### State layers (v1.8)
+
+Hover 8% y pressed 12% en ambos temas, según el estándar M3:
+
+```css
+html[data-theme="light"] .rdm-list--container:hover::after { background-color: rgba(0,0,0,0.08); }
+html[data-theme="light"] .rdm-list--container:active::after { background-color: rgba(0,0,0,0.12); }
+html[data-theme="dark"]  .rdm-list--container:hover::after { background-color: rgba(255,255,255,0.08); }
+html[data-theme="dark"]  .rdm-list--container:active::after { background-color: rgba(255,255,255,0.12); }
+```
+
+### Dimensiones de media (alineadas a M3 v1.8)
+
+| Elemento | Valor | Spec M3 |
+|---|---|---|
+| **Leading avatar** | 40px (2.5em) | 40dp ✅ |
+| **Leading image** | 56px (3.5em) | 56dp ✅ |
+| **Leading icon** | 24px (1.5em) | 24dp ✅ (era 18px antes de v1.8) |
+| **Trailing icon** | 24px (1.5em) | 24dp ✅ |
+| **Gap body → action** | 16px (1em) | 16dp ✅ (era 24px antes de v1.8) |
+
+### Desviación consciente
+
+`font-variation-settings: 'FILL' 1` en hover de los iconos **no es M3**. Es una decisión estética propia de RDM (los iconos Material Symbols se rellenan al hover). Si se requiere cumplimiento estricto, eliminar las reglas de `list.css` que aplican `FILL`.
+
+---
+
+## Design Tokens (capa `css/md/`)
+
+### Correcciones de v1.9
+
+La capa de tokens tenía **referencias rotas** que impedían que la tipografía funcionara:
+
+| Slot | Antes (referenciado) | Ahora (correcto) | Problema |
+|---|---|---|---|
+| line-height | `...-X-**height**` | `...-X-**line-height**` | Token inexistente → `line-height` caía a `normal` |
+| letter-spacing | `...-X-**tracking**` | `...-X-**letter-spacing**` | Token inexistente → sin tracking |
+| font-weight | `400px` / `500px` | `400` / `500` | CSS no admite unidades en `font-weight` |
+| font-style | `Regular` / `Medium` | `normal` | No son valores válidos de `font-style` |
+| text-transform | (no existía) | `none` × 15 | 30 referencias sin resolver |
+| text-decoration | (no existía) | `none` × 15 | 30 referencias sin resolver |
+| surface-dim | (no existía) | `#DED8E1` light / `#141218` dark | `landing.css` lo usaba en pricing y footer |
+
+**Alcance:** 60 referencias corregidas (2 slots × 15 estilos × 2 archivos) en `typography.css` (clases `rdm-sys-typography--*`) y `typography.module.css` (clases `display-*`/`headline-*`/etc.).
+
+**Efecto visual:** al aplicarse por fin `line-height` y `letter-spacing`, **el ritmo vertical y el tracking del texto cambian en todo el catálogo**. Es el comportamiento correcto de M3, pero es visible en todas las páginas.
+
+### Nomenclatura de tokens
+
+`tokens.css` define los valores con sufijo de tema y `theme.light.css` / `theme.dark.css` los remapean al nombre sin sufijo:
+
+```css
+/* tokens.css */
+--md-sys-color-surface-dim-light: #DED8E1;
+--md-sys-color-surface-dim-dark: #141218;
+
+/* theme.light.css */
+--md-sys-color-surface-dim: var(--md-sys-color-surface-dim-light);
+```
+
+**Regla:** un token de color nuevo hay que tocarlo en 3 archivos. Un token de typescale, solo en `tokens.css` (no varían por tema).
+
+### Verificación
+
+Para comprobar que no queden referencias rotas en todo el proyecto:
+
+```powershell
+$def = (Select-String -Path css\md\tokens.css,css\md\theme.light.css,css\md\theme.dark.css,css\estilos.css -Pattern "^\s*(--[\w-]+):" | ForEach-Object { ($_.Line -replace '^\s*','') -replace ':.*$','' } | Sort-Object -Unique)
+$used = (Select-String -Path css\*.css,css\md\*.css -Pattern "var\(\s*(--[\w-]+)" -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+($used | Where-Object { $def -notcontains $_ })
+```
+
+### Pendiente conocido
+
+- **Tokens de elevación:** `--md-sys-elevation-level1..5` se mencionan en la doc pero **no existen** en `tokens.css`. Todos los `box-shadow` siguen hardcodeados en cada CSS. Pendiente de tokenizar.
+- **`surface-bright`:** tampoco definido (aún no referenciado, así que no rompe nada).
 
 ---
 
 ## Componentes Relacionados
 
+### Empty State
+- **Estado**: ✅ Patrón M3 implementado (v1.8) — a11ydynamics pendiente
+- **Ubicación**: [empty.php](empty.php) / [css/empty.css](css/empty.css)
+
+### Card con lista
+- **Estado**: ✅ Extensión propia (v1.8) — ortogonal a los 3 tipos de card
+- **Ubicación**: [cardlist.php](cardlist.php) / [css/cardlist.css](css/cardlist.css)
+
+### Lists
+- **Estado**: ✅ Alturas y state layers alineados a M3 (v1.8)
+- **Ubicación**: [lists.php](lists.php) / [css/list.css](css/list.css)
+
 ### File Input
-- **Estado**: ✅ Implementado según estándar MD3 (v1.7) - 3 variantes (TextField, DropZone, Button)
+- **Estado**: ✅ Implementado (v1.8) — minimalista, 2 variantes (imagen, documento)
 - **Ubicación**: [fileinputs.php](fileinputs.php) / [css/fileinput.css](css/fileinput.css) / [js/fileinput.js](js/fileinput.js)
 
 ### Snackbar
@@ -933,6 +1179,8 @@ Todas `160ms ease` (MD3):
 
 - [Material Design 3 - Search](https://m3.material.io/components/search/specs)
 - [Material Design 3 - Input](https://m3.material.io/components/text-fields/specs)
+- [Material Design 3 - Lists](https://m3.material.io/components/lists/specs) (alturas 56/72/88dp, state layers)
+- [Material Design 3 - Cards](https://m3.material.io/components/cards/specs) (elevated/filled/outlined)
 - [Material Design 3 - Buttons](https://m3.material.io/components/buttons/specs) (patrón File Input: hidden + button)
 - [Material Web - File Upload](https://github.com/material-components/material-web) (md-filled-button + input hidden)
 - [MUI - File Upload Button](https://mui.com/material-ui/react-button/#file-upload)

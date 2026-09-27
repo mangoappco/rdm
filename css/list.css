@@ -8,16 +8,53 @@ Autor: Danny Estrada
 .rdm-list--container {  
     display: flex;
     justify-content: space-between;
-    padding: 1em 1em;
+    align-items: center;   /* one/two-line: leading y trailing centrados (M3) */
+    padding: 1em;                 /* 16dp vertical — one-line: 16+24+16 = 56dp */
     background-color: var(--bg-color1);
     position: relative; /* para overlay de estado */
     overflow: hidden;   /* recorta overlay si hay borde redondeado */
+    box-sizing: border-box;  /* necesario para que min-height incluya el padding */
+    min-height: 3.5em;  /* 56dp — one-line (default) */
+}
+
+/* Alturas M3: el padding vertical varía para cerrar la cuenta exacta */
+.rdm-list--container:has(.rdm-list--body > :nth-child(2)) {
+    min-height: 4.5em;  /* 72dp — two-line */
+    padding-top: 0.875em;    /* 14px: 14+24+20+14 = 72dp */
+    padding-bottom: 0.875em;
+}
+
+/* ===== three-line o superior: alineación superior (M3) =====
+   El leading (icon/avatar) y el trailing se anclan arriba, alineados con el
+   inicio de la primera línea de texto, con 16dp de aire sobre el borde.
+
+   El padding es cómodo (16dp arriba y abajo) y NO se exprime para forzar 88dp:
+   si el supporting envuelve a varias líneas el body crece y el ítem crece con
+   él. Ajustar el padding a 4dp inferior solo servía para "cuadrar" un alto
+   que en la práctica nunca se daba, y dejaba el leading pegado al borde. */
+.rdm-list--container:has(.rdm-list--body > :nth-child(3)) {
+    min-height: 5.5em;  /* 88dp es el MÍNIMO, no un alto fijo */
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.rdm-list--container:has(.rdm-list--body > :nth-child(3)) .rdm-list--body,
+.rdm-list--container:has(.rdm-list--body > :nth-child(3)) .rdm-list--media,
+.rdm-list--container:has(.rdm-list--body > :nth-child(3)) .rdm-list--action {
+    align-self: flex-start;
+}
+
+/* Un leading image de 56dp implica un ítem de 88dp (M3).
+   Va al final para ganar por orden de fuente (misma especificidad). */
+.rdm-list--container:has(> .rdm-list--media .rdm-list--leading-image) {
+    min-height: 5.5em;  /* 88dp */
 }
 
 /* list media elements */
 .rdm-list--media {  
     display: flex;
     justify-content: center;
+    align-items: center;   /* centra el contenido dentro de la media */
     flex-grow: 0;
     margin-right: 1em;
     background-color: var(--bg-color1);
@@ -27,14 +64,14 @@ Autor: Danny Estrada
     .rdm-list--leading-icon {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
         height: 2.5em;
         background-color: var(--bg-color2);
     }
 
     /* material design icons */
     .rdm-list--leading-icon .material-symbols-rounded, .rdm-list--leading-icon .material-symbols-outlined {
-        font-size: 1.125em;
+        font-size: 1.5em;  /* 24dp según M3 Lists */
         align-self: center;
         color: var(--md-sys-color-on-surface-variant);
         transition: font-variation-settings 0.3s ease;
@@ -84,26 +121,31 @@ Autor: Danny Estrada
     background-color: var(--bg-color1);
 }
 
-    /* body headline */
+    /* body headline — M3: body-large (16/24) */
     .rdm-list--body-headline {
-        margin: 0.09em 0em ;
+        margin: 0;
+        font-size: var(--md-sys-typescale-body-large-font-size);
+        line-height: var(--md-sys-typescale-body-large-line-height);
+        letter-spacing: var(--md-sys-typescale-body-large-letter-spacing);
+        color: var(--md-sys-color-on-surface);
         background-color: var(--bg-color2);
-        
     }
 
-    /* body suporting text */
+    /* body supporting text — M3: body-medium (14/20) */
     .rdm-list--body-suporting-text {
-        margin: 0.04em 0em ;
+        margin: 0;
+        font-size: var(--md-sys-typescale-body-medium-font-size);
+        line-height: var(--md-sys-typescale-body-medium-line-height);
+        letter-spacing: var(--md-sys-typescale-body-medium-letter-spacing);
         color: var(--md-sys-color-on-surface-variant);
         background-color: var(--bg-color2);
-        
     }
 
 /* list action elements */
 .rdm-list--action {
     display: flex;
     flex-grow: 0;
-    margin-right: 1.5em;
+    margin-right: 1em;
     background-color: var(--bg-color1);    
 }   
 
@@ -111,7 +153,7 @@ Autor: Danny Estrada
     .rdm-list--trailing-icon {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
         height: 2.5em;
         background-color: var(--bg-color2);
     }
@@ -149,13 +191,13 @@ Autor: Danny Estrada
     transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
-/* Hover y Active en tema claro (sutil) */
-html[data-theme="light"] .rdm-list--container:hover::after { background-color: rgba(0,0,0,0.06); opacity: 1; }
-html[data-theme="light"] .rdm-list--container:active::after { background-color: rgba(0,0,0,0.10); opacity: 1; }
+/* State layers M3: hover 8%, pressed 12% (on-surface en ambos temas) */
+html[data-theme="light"] .rdm-list--container:hover::after { background-color: rgba(0,0,0,0.08); opacity: 1; }
+html[data-theme="light"] .rdm-list--container:active::after { background-color: rgba(0,0,0,0.12); opacity: 1; }
 
 /* Hover y Active en tema oscuro (sutil) */
-html[data-theme="dark"]  .rdm-list--container:hover::after { background-color: rgba(255,255,255,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-list--container:active::after { background-color: rgba(255,255,255,0.14); opacity: 1; }
+html[data-theme="dark"]  .rdm-list--container:hover::after { background-color: rgba(255,255,255,0.08); opacity: 1; }
+html[data-theme="dark"]  .rdm-list--container:active::after { background-color: rgba(255,255,255,0.12); opacity: 1; }
 
 /* Esquinas redondeadas en primer/último ítem dentro de tarjetas */
 .rdm-card--elevated .rdm-list--container:first-child,
