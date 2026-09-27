@@ -294,3 +294,20 @@
   --md-sys-typescale-title-small-text-transform: none;
   --md-sys-typescale-title-small-text-decoration: none;
 }
+
+/* ================================================================
+   ELEVATION - M3
+   Sombras de Material 3 por nivel. No varian por tema, asi que van
+   en su propio bloque :root y no dentro de light/dark.
+   Sustituyen a las sombras de Material 2
+   (0 3px 1px -2px rgba(0,0,0,.2)...) que se usaban antes.
+   Uso: elevated -> level 1, FAB -> level 3
+   ================================================================ */
+:root {
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level2: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level4: 0px 2px 4px 0px rgba(0, 0, 0, 0.3), 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level5: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+}

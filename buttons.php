@@ -239,6 +239,67 @@
      
     </p>
 
+    <!-- Disabled buttons -->
+
+    <h1 class="rdm-sys-typography--display-medium">Disabled buttons</h1>
+    <p class="rdm-sys-typography--body-large">M3 aplica 38% de opacidad sobre el container y la etiqueta, sin elevacion y sin state layer.</p>
+
+    <p>        <!-- disabled elevated -->
+        <button class="rdm-button--elevated" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled filled -->
+        <button class="rdm-button--filled" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled tonal -->
+        <button class="rdm-button--tonal" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled outlined -->
+        <button class="rdm-button--outlined" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled text -->
+        <button class="rdm-button--text" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+    </p>
     <!-- FAB buttons -->
 
     <h1 class="rdm-sys-typography--display-medium">FAB buttons</h1>
@@ -272,6 +333,67 @@
     
     
 
+    <!-- Disabled buttons -->
+
+    <h1 class="rdm-sys-typography--display-medium">Disabled buttons</h1>
+    <p class="rdm-sys-typography--body-large">M3 aplica 38% de opacidad sobre el container y la etiqueta, sin elevacion y sin state layer.</p>
+
+    <p>        <!-- disabled elevated -->
+        <button class="rdm-button--elevated" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled filled -->
+        <button class="rdm-button--filled" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled tonal -->
+        <button class="rdm-button--tonal" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled outlined -->
+        <button class="rdm-button--outlined" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+        <!-- disabled text -->
+        <button class="rdm-button--text" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+            <div class="rdm-button--body">
+                <span class="rdm-sys-typography--label-large">Button</span>
+            </div>
+        </div>
+        </button>
+    </p>
     <!-- FAB buttons -->
 
     <p>

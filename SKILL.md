@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.11** - Fases 2 y 3 de la auditoria de **Buttons**: altura fija de 40dp en `.rdm-button--container` (antes 42.4px por padding, y fragil ante cambios de tipografia) con padding solo horizontal y `align-items: center`; estado `disabled` al 38% de opacidad sin elevacion ni state layer, demostrado en `buttons.php`; eliminadas las reglas globales `button:hover` / `button:active` que anadian `box-shadow` a todo `<button>` (en M3 la elevacion es estatica y solo la tienen elevated y FAB); anadidos los tokens `--md-sys-elevation-level0..5` a `tokens.css` y reemplazo de las 5 sombras de Material 2 por tokens: elevated nivel 1, FAB nivel 3, card elevated nivel 1, form elevated nivel 1
 - **v1.10** - Auditoria de **Buttons** contra M3 (Fase 1): `tonal` corregido de `primary-container` + `primary` a `secondary-container` + `on-secondary-container` (el morado sobre morado palido daba contraste pobre); `elevated` corregido de `surface` (identico al fondo del body, invisible sin la sombra) a `surface-container-low`; `fab` y `fab-small` de `tertiary-container` a `primary-container`. State layers unificados a **8% hover / 12% pressed** en las 6 variantes y migrados de 24 reglas `rgba` duplicadas por tema a 12 reglas con `color-mix` sobre el token, que siguen al tema automaticamente
 - **v1.9** - Corrección de la capa de tokens: 60 referencias rotas (`-height` → `-line-height`, `-tracking` → `-letter-spacing`) que impedían aplicar line-height y letter-spacing en las 30 clases de tipografía; `font-weight` sin unidad px, `font-style` normalizado, `text-transform`/`text-decoration` añadidos y token `surface-dim` creado. **Alineación vertical de Lists alineada a M3** (one/two-line centrados, three-line+ top con 16dp de aire) y alturas 56/72dp exactas. Nuevo **tercer rol `rdm-list--body-value`** (label 14/20 weight 500 + `tabular-nums`) para precios/SKU/stock, y eliminación de los wrappers `rdm-sys-typography--*` redundantes en el body de listas
 - **v1.8** - Empty State (patrón M3: icono + headline + support + action, con a11y), Card con lista interna (`.rdm-card--list` ortogonal a los 3 tipos de card + variante `--divided`), y **alineación M3 de Lists**: alturas one-line 56dp / two-line 72dp / three-line 88dp, leading icon 24dp y state layers hover 8% / pressed 12%. File Input se simplifica a variante minimalista (label fijo sin transición) y la demo queda en 2 variantes
@@ -1232,20 +1233,69 @@ Hover **8%** y pressed **12%**, uniformes en las 6 variantes. El color de la cap
 
 El margen negativo en `.rdm-button--media` existe para que el padding de 24px del container se convierta en 16dp reales cuando hay icono.
 
+### Altura y estado disabled (M3)
+
+**Altura:** `.rdm-button--container` usa `height: 2.5em` (40dp) con `align-items: center` y **padding solo horizontal**. Antes era `padding: 0.7em 1.5em` sin alto fijo, lo que daba 42.4px con `label-large` y cambiaba si el label usaba otra tipografía. Con alto fijo + centrado el contenido queda centrado sea cual sea su line-height.
+
+```css
+.rdm-button--container {
+  height: 2.5em;      /* 40dp */
+  padding: 0 1.5em;   /* solo horizontal */
+  align-items: center;
+}
+.rdm-button--fab .rdm-button--container,
+.rdm-button--fab-small .rdm-button--container { height: 100%; }
+```
+
+El `height: 100%` es para que el container llene el botón cuando este tiene alto propio (los FAB de 56dp y 40dp).
+
+**Estado disabled:** 38% de opacidad, sin elevación y sin state layer. El `pointer-events: none` evita el hover y el ripple a la vez.
+
+```css
+.rdm-button--filled:disabled { opacity: 0.38; box-shadow: none; pointer-events: none; cursor: not-allowed; }
+.rdm-button--filled:disabled::after { opacity: 0; }  /* anula el state layer */
+```
+
+Demostrado en `buttons.php` con las 5 variantes.
+
+### Elevación tokenizada (M3)
+
+Se añadieron `--md-sys-elevation-level0..5` a `tokens.css`. No varían por tema, así que viven fuera de los bloques light/dark.
+
+| Nivel | Valor |
+|---|---|
+| level1 | `0 1px 2px 0 rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.15)` |
+| level2 | `0 1px 2px 0 rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15)` |
+| level3 | `0 1px 3px 0 rgba(0,0,0,.3), 0 4px 8px 3px rgba(0,0,0,.15)` |
+| level4 | `0 2px 4px 0 rgba(0,0,0,.3), 0 6px 10px 4px rgba(0,0,0,.15)` |
+| level5 | `0 4px 8px 3px rgba(0,0,0,.15), 0 8px 12px 6px rgba(0,0,0,.15)` |
+
+**Asignación en el proyecto:**
+
+| Componente | Token |
+|---|---|
+| `.rdm-button--elevated` | `level1` |
+| `.rdm-button--fab` / `--fab-small` | `level3` |
+| `.rdm-card--elevated` | `level1` |
+| `.rdm-form--elevated` | `level1` |
+
+Las 5 sombras de Material 2 (`0 3px 1px -2px rgba(0,0,0,.2)…`) fueron reemplazadas. `elevation.css` y `tarjetas.css` también las tenían pero están **muertos** (no se importan en `estilos.css`).
+
+### Eliminada la elevación dinámica
+
+Las reglas globales `button:hover` y `button:active` se borraron. Aplicaban `box-shadow` a **todo** `<button>` del proyecto, incluidos tonal, filled, outlined y text, que en M3 deben permanecer planos.
+
+En M3 la elevación es **estática**: solo elevated y FAB la tienen y no cambia con hover ni pressed. El feedback de interacción lo da exclusivamente el state layer.
+
 ### Desviaciones pendientes
 
 | # | Desviacion | Nota |
 |---|---|---|
-| 1 | `button:hover` / `button:active` aplican `box-shadow` a **todo** `<button>` | Selector global. M3 solo da elevacion a elevated y FAB; tonal, filled, outlined y text deben quedar planos |
-| 2 | Las sombras son **Material 2** | M3 level 1 = `0 1px 2px rgba(0,0,0,.30), 0 1px 3px 1px rgba(0,0,0,.15)`. Mismo valor M2 en `card.css:34` y `form.css:33` |
-| 3 | **Sin tokens de elevacion** en `tokens.css` | Todas las sombras estan hardcodeadas |
-| 4 | **Sin altura de 40dp** | El alto sale de `padding: 0.7em` + line-height. Con `label-large` da 42.4px, y cambia si el label usa otra tipografia |
-| 5 | **Sin estado `disabled`** | Cero reglas `:disabled`. M3 pide 38% de opacidad, `pointer-events: none` y sin elevacion |
-| 6 | Falta boton de solo icono | M3: 40x40, fully rounded, variantes estandar, filled, tonal y outlined |
-| 7 | Falta Large FAB | M3: 96x96 con radio 28dp |
-| 8 | `transition: 0.2s ease` | M3 no tiene 200ms; sus duraciones son 50/100/250/300/400/450/600ms con easing `cubic-bezier(0.2, 0, 0, 1)` |
-| 9 | Padding trailing 24px | M3 pide 16dp al final. Pendiente de confirmar en la spec |
-| 10 | Dimensiones en `em` escalan en movil | `estilos.css:264` pone `body { font-size: 15px }` bajo 530px, asi que los 40dp se vuelven ~39px. Decision del proyecto, afecta a toda la libreria |
+| 1 | Falta boton de solo icono | M3: 40x40, fully rounded, variantes estandar, filled, tonal y outlined |
+| 2 | Falta Large FAB | M3: 96x96 con radio 28dp |
+| 3 | `transition: 0.2s ease` | M3 no tiene 200ms; sus duraciones son 50/100/250/300/400/450/600ms con easing `cubic-bezier(0.2, 0, 0, 1)` |
+| 4 | Padding trailing 24px | M3 pide 16dp al final. Pendiente de confirmar en la spec |
+| 5 | Dimensiones en `em` escalan en movil | `estilos.css:264` pone `body { font-size: 15px }` bajo 530px, asi que los 40dp se vuelven ~39px. Decision del proyecto, afecta a toda la libreria |
 
 ---
 

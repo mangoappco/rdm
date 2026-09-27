@@ -25,7 +25,14 @@ button{
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    padding: 0.7em 1.5em;    
+    height: 2.5em;         /* 40dp — M3 fija el alto del boton */
+    padding: 0 1.5em;      /* solo horizontal: el alto lo da height */
+}
+
+/* El container llena el boton cuando este tiene alto propio (FAB) */
+.rdm-button--fab .rdm-button--container,
+.rdm-button--fab-small .rdm-button--container {
+    height: 100%;
 }
 
 /*Media elements*/
@@ -95,7 +102,7 @@ button{
 .rdm-button--fab{
     background-color: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--md-sys-elevation-level3);
     height: 3.5em;
     border-radius: 1em;
 }
@@ -110,7 +117,7 @@ button{
 .rdm-button--fab-small{
     background-color: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--md-sys-elevation-level3);
     height: 2.5em;
     width: 2.5em;
     border-radius: 0.75em;
@@ -136,7 +143,7 @@ button{
 .rdm-button--elevated{
     background-color: var(--md-sys-color-surface-container-low);
     color: var(--md-sys-color-primary);
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--md-sys-elevation-level1);
 }
 
 /*Filled*/
@@ -175,15 +182,41 @@ button{
 
 
 
-/*Button states*/
-button:hover {
-    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+/*Button states
+   NOTA: en M3 la elevacion NO cambia con hover ni con pressed. Solo
+   elevated y FAB tienen sombra, y es estatica. El feedback de interaccion
+   lo da el state layer (ver seccion State layers mas abajo).
+   Antes habia reglas globales button:hover / button:active que anadian
+   box-shadow a todo <button> del proyecto, incluidos tonal, filled,
+   outlined y text que en M3 deben quedar planos. */
+
+/* ===== Estado disabled (M3) =====
+   38% de opacidad sobre container y etiqueta, sin elevacion y sin
+   state layer. pointer-events:none evita el hover y el ripple.
+   Va antes de los state layers para que el ::after quede en opacity 0. */
+
+.rdm-button--elevated:disabled,
+.rdm-button--filled:disabled,
+.rdm-button--tonal:disabled,
+.rdm-button--outlined:disabled,
+.rdm-button--text:disabled,
+.rdm-button--fab:disabled,
+.rdm-button--fab-small:disabled {
+    opacity: 0.38;
+    box-shadow: none;
+    pointer-events: none;
+    cursor: not-allowed;
 }
 
-button:active {
-    box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+.rdm-button--elevated:disabled::after,
+.rdm-button--filled:disabled::after,
+.rdm-button--tonal:disabled::after,
+.rdm-button--outlined:disabled::after,
+.rdm-button--text:disabled::after,
+.rdm-button--fab:disabled::after,
+.rdm-button--fab-small:disabled::after {
+    opacity: 0;
 }
-
 /* ===== State layers M3 =====
    Hover 8% y pressed 12%, uniformes en todas las variantes.
    El color de la capa es el mismo "on" que usa la etiqueta, por eso se
