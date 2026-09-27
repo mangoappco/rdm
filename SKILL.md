@@ -2,6 +2,8 @@
 
 ## Historial de Versiones
 
+- **v1.13** - Large FAB segun M3 (96x96, radio 28dp, icono 36dp, elevacion level 3), incluido en los selectores de state layer y disabled. Se documenta tambien la spec de padding asimetrico de M3 verificada (sin icono 24/24, con icono 16 start / 24 end, gap 8dp) que el proyecto ya cumplia con el margen negativo del media
+- **v1.12** - Boton de solo icono segun M3: `.rdm-button--icon-only` como modificador de tamano (no variante) para heredar color, state layer y disabled de cualquier variante, 40x40 visual con icono 24dp, demostrado en `buttons.php` con las 5 variantes y con `aria-label`. Motion: `button.css` unificado a 160ms (antes mezclaba 0.2s en el boton y 0.15s en el state layer del mismo archivo)
 - **v1.11** - Fases 2 y 3 de la auditoria de **Buttons**: altura fija de 40dp en `.rdm-button--container` (antes 42.4px por padding, y fragil ante cambios de tipografia) con padding solo horizontal y `align-items: center`; estado `disabled` al 38% de opacidad sin elevacion ni state layer, demostrado en `buttons.php`; eliminadas las reglas globales `button:hover` / `button:active` que anadian `box-shadow` a todo `<button>` (en M3 la elevacion es estatica y solo la tienen elevated y FAB); anadidos los tokens `--md-sys-elevation-level0..5` a `tokens.css` y reemplazo de las 5 sombras de Material 2 por tokens: elevated nivel 1, FAB nivel 3, card elevated nivel 1, form elevated nivel 1
 - **v1.10** - Auditoria de **Buttons** contra M3 (Fase 1): `tonal` corregido de `primary-container` + `primary` a `secondary-container` + `on-secondary-container` (el morado sobre morado palido daba contraste pobre); `elevated` corregido de `surface` (identico al fondo del body, invisible sin la sombra) a `surface-container-low`; `fab` y `fab-small` de `tertiary-container` a `primary-container`. State layers unificados a **8% hover / 12% pressed** en las 6 variantes y migrados de 24 reglas `rgba` duplicadas por tema a 12 reglas con `color-mix` sobre el token, que siguen al tema automaticamente
 - **v1.9** - Corrección de la capa de tokens: 60 referencias rotas (`-height` → `-line-height`, `-tracking` → `-letter-spacing`) que impedían aplicar line-height y letter-spacing en las 30 clases de tipografía; `font-weight` sin unidad px, `font-style` normalizado, `text-transform`/`text-decoration` añadidos y token `surface-dim` creado. **Alineación vertical de Lists alineada a M3** (one/two-line centrados, three-line+ top con 16dp de aire) y alturas 56/72dp exactas. Nuevo **tercer rol `rdm-list--body-value`** (label 14/20 weight 500 + `tabular-nums`) para precios/SKU/stock, y eliminación de los wrappers `rdm-sys-typography--*` redundantes en el body de listas
@@ -1227,7 +1229,8 @@ Hover **8%** y pressed **12%**, uniformes en las 6 variantes. El color de la cap
 | Shape comun | `border-radius: 20em` (pildora) | fully rounded OK |
 | Icono leading | `1.125em` = 18px | 18dp OK |
 | Gap icono-label | 8px via `margin-left: -0.5em` | 8dp OK |
-| Padding leading | 16px (`1.5em - 0.5em`) | 16dp OK |
+| Padding sin icono | 24px / 24px (`1.5em`) | 24dp / 24dp OK |
+| Padding con icono | 16px start / 24px end | 16dp / 24dp OK |
 | FAB medium | `3.5em` + `1em` | 56dp + 16dp OK |
 | FAB small | `2.5em` + `0.75em` | 40dp + 12dp OK |
 
@@ -1287,15 +1290,98 @@ Las reglas globales `button:hover` y `button:active` se borraron. Aplicaban `box
 
 En M3 la elevación es **estática**: solo elevated y FAB la tienen y no cambia con hover ni pressed. El feedback de interacción lo da exclusivamente el state layer.
 
+### FAB - Medidas M3
+
+| Variante | Clase | Dimension | Radio | Icono | Elevacion |
+|---|---|---|---|---|---|
+| Large | `.rdm-button--fab-large` | 96x96 (`6em`) | 28dp (`1.75em`) | 36dp (`2.25em`) | level 3 |
+| Medium | `.rdm-button--fab` | 56dp (`3.5em`) alto | 16dp (`1em`) | 24dp (`1.5em`) | level 3 |
+| Small | `.rdm-button--fab-small` | 40x40 (`2.5em`) | 12dp (`0.75em`) | 24dp (`1.5em`) | level 3 |
+
+**El Large de M3 es cuadrado y solo lleva icono.** Para un FAB con etiqueta se usa el Medium, que es el unico con `width` implicito (crece con el texto).
+
+El Large hereda automaticamente state layer y disabled al estar incluido en los mismos selectores que Medium y Small.
+
+**Desviacion menor:** el icono del Small es 24dp cuando M3 pide 20dp. No corregido por ser de bajo impacto visual.
+
+### Padding horizontal (M3) - VERIFICADO
+
+La spec de M3 para buttons define padding **asimetrico** cuando hay leading icon:
+
+| Caso | Composicion |
+|---|---|
+| Sin icono | `24dp \| label \| 24dp` |
+| Con icono | `16dp \| icono 18dp \| gap 8dp \| label \| 24dp` |
+
+**El trailing de 24dp es correcto segun la spec.** Durante la auditoria se marco por error como desviacion (se asumio 16dp al final); la spec lo confirma en 24dp.
+
+### Como lo resuelve el proyecto
+
+Con padding base de 24dp en ambos extremos, mas un margen negativo en el media, se obtiene exactamente la composicion de M3 sin necesidad de una clase modificadora:
+
+```css
+.rdm-button--container { padding: 0 1.5em; }        /* 24px / 24px */
+.rdm-button--media     { margin-left: -0.5em;        /* -8px -> icono en 16px */
+                         margin-right: 0.5em; }      /* +8px -> gap de 8dp */
+```
+
+| Tramo | Calculo | Resultado | Spec |
+|---|---|---|---|
+| Leading | 24 - 8 | **16px** | 16dp |
+| Icono | `1.125em` | **18px** | 18dp |
+| Gap | `+0.5em` | **8px** | 8dp |
+| Trailing | sin compensar | **24px** | 24dp |
+
+**Alternativa mas explicita (no aplicada):** un modificador `.rdm-button--has-leading-icon` con `padding-left: 16px` y `gap: 8px` en el container. Es mas legible, pero obliga a anadir la clase a los **57 botones con icono de 18 archivos**, a cambio de cero cambio visual. Se mantiene el margen negativo.
+
+### Icon button (solo icono) - M3
+
+Modificador de **tamano**, no una variante. Se combina con cualquier variante para heredar color, state layer y disabled sin duplicar reglas:
+
+```html
+<button class="rdm-button--filled rdm-button--icon-only" aria-label="Agregar">
+  <div class="rdm-button--container">
+    <div class="rdm-button--media">
+      <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+    </div>
+  </div>
+</button>
+```
+
+| Medida | Valor | Spec M3 |
+|---|---|---|
+| Dimensión | `2.5em` = 40×40 | 40dp ✅ |
+| Shape | píldora completa | fully rounded ✅ |
+| Icono | `1.5em` = 24dp | 24dp ✅ |
+
+Demostrado en `buttons.php` con las 5 variantes + una deshabilitada. Todos llevan `aria-label` porque sin etiqueta el nombre accesible sería vacío.
+
+**Target táctil pendiente:** M3 recomienda un área táctil de 48dp aunque el visual sea de 40dp. No implementado; requiere un pseudo-elemento que expanda el área sin afectar el layout.
+
+### Motion
+
+`button.css` usa **160ms** en el botón y en el state layer. Antes mezclaba `0.2s` y `0.15s` en el mismo archivo, o sea dos ritmos en un componente.
+
+**La librería todavía no tiene un ritmo único:**
+
+| Archivo | Duraciones |
+|---|---|
+| `textfield.css` | 160ms |
+| `search.css` | 160ms + **240ms** (trailing icon) |
+| `fileinput.css` | 160ms |
+| `button.css` | 160ms (corregido en v1.12) |
+| `list.css` | **0.3s** y **0.15s** (en segundos, no ms) |
+
+Ninguno de esos valores es un token de motion de M3, que son **50 / 100 / 250 / 300 / 400 / 450 / 600ms** con easing `cubic-bezier(0.2, 0, 0, 1)`.
+
+Migrar la librería completa a los tokens de motion de M3 es un proyecto global aparte: toca al menos 5 archivos y afecta la percepción de toda la interfaz, así que conviene hacerlo con폭 la librería auditada componente por componente.
+
 ### Desviaciones pendientes
 
 | # | Desviacion | Nota |
 |---|---|---|
-| 1 | Falta boton de solo icono | M3: 40x40, fully rounded, variantes estandar, filled, tonal y outlined |
-| 2 | Falta Large FAB | M3: 96x96 con radio 28dp |
-| 3 | `transition: 0.2s ease` | M3 no tiene 200ms; sus duraciones son 50/100/250/300/400/450/600ms con easing `cubic-bezier(0.2, 0, 0, 1)` |
-| 4 | Padding trailing 24px | M3 pide 16dp al final. Pendiente de confirmar en la spec |
-| 5 | Dimensiones en `em` escalan en movil | `estilos.css:264` pone `body { font-size: 15px }` bajo 530px, asi que los 40dp se vuelven ~39px. Decision del proyecto, afecta a toda la libreria |
+| 1 | Motion sin tokens de M3 en toda la libreria | button.css ya unificado a 160ms, pero list.css usa 0.3s/0.15s, search.css tiene 240ms, y ninguno es un token de M3 (50/100/250/300/400/450/600ms) |
+| 2 | Dimensiones en `em` escalan en movil | `estilos.css:264` pone `body { font-size: 15px }` bajo 530px, asi que los 40dp se vuelven ~39px. Decision del proyecto, afecta a toda la libreria |
 
 ---
 

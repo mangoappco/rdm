@@ -239,6 +239,54 @@
      
     </p>
 
+    <!-- Icon buttons -->
+
+    <h1 class="rdm-sys-typography--display-medium">Icon buttons</h1>
+    <p class="rdm-sys-typography--body-large">Modificador de tamano: se combina con cualquier variante para heredar color, state layer y disabled. 40x40 visual, icono 24dp centrado.</p>
+
+    <p>        <button class="rdm-button--elevated rdm-button--icon-only" aria-label="Agregar">
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+        </div>
+        </button>
+        <button class="rdm-button--filled rdm-button--icon-only" aria-label="Agregar">
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+        </div>
+        </button>
+        <button class="rdm-button--tonal rdm-button--icon-only" aria-label="Agregar">
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+        </div>
+        </button>
+        <button class="rdm-button--outlined rdm-button--icon-only" aria-label="Agregar">
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+        </div>
+        </button>
+        <button class="rdm-button--text rdm-button--icon-only" aria-label="Agregar">
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+        </div>
+        </button>
+        <button class="rdm-button--filled rdm-button--icon-only" aria-label="Agregar" disabled>
+        <div class="rdm-button--container">
+            <div class="rdm-button--media">
+                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+            </div>
+        </div>
+        </button>
+    </p>
     <!-- Disabled buttons -->
 
     <h1 class="rdm-sys-typography--display-medium">Disabled buttons</h1>
@@ -300,6 +348,7 @@
         </div>
         </button>
     </p>
+
     <!-- FAB buttons -->
 
     <h1 class="rdm-sys-typography--display-medium">FAB buttons</h1>
@@ -333,67 +382,6 @@
     
     
 
-    <!-- Disabled buttons -->
-
-    <h1 class="rdm-sys-typography--display-medium">Disabled buttons</h1>
-    <p class="rdm-sys-typography--body-large">M3 aplica 38% de opacidad sobre el container y la etiqueta, sin elevacion y sin state layer.</p>
-
-    <p>        <!-- disabled elevated -->
-        <button class="rdm-button--elevated" disabled>
-        <div class="rdm-button--container">
-            <div class="rdm-button--media">
-                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-            </div>
-            <div class="rdm-button--body">
-                <span class="rdm-sys-typography--label-large">Button</span>
-            </div>
-        </div>
-        </button>
-        <!-- disabled filled -->
-        <button class="rdm-button--filled" disabled>
-        <div class="rdm-button--container">
-            <div class="rdm-button--media">
-                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-            </div>
-            <div class="rdm-button--body">
-                <span class="rdm-sys-typography--label-large">Button</span>
-            </div>
-        </div>
-        </button>
-        <!-- disabled tonal -->
-        <button class="rdm-button--tonal" disabled>
-        <div class="rdm-button--container">
-            <div class="rdm-button--media">
-                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-            </div>
-            <div class="rdm-button--body">
-                <span class="rdm-sys-typography--label-large">Button</span>
-            </div>
-        </div>
-        </button>
-        <!-- disabled outlined -->
-        <button class="rdm-button--outlined" disabled>
-        <div class="rdm-button--container">
-            <div class="rdm-button--media">
-                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-            </div>
-            <div class="rdm-button--body">
-                <span class="rdm-sys-typography--label-large">Button</span>
-            </div>
-        </div>
-        </button>
-        <!-- disabled text -->
-        <button class="rdm-button--text" disabled>
-        <div class="rdm-button--container">
-            <div class="rdm-button--media">
-                <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-            </div>
-            <div class="rdm-button--body">
-                <span class="rdm-sys-typography--label-large">Button</span>
-            </div>
-        </div>
-        </button>
-    </p>
     <!-- FAB buttons -->
 
     <p>
@@ -421,13 +409,42 @@
      
     </p>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+    <!-- FAB large -->
 
-    
+    <h1 class="rdm-sys-typography--display-medium">FAB large</h1>
+    <p class="rdm-sys-typography--body-large">96x96, radio 28dp, icono 36dp y elevacion nivel 3. El large de M3 es cuadrado y solo lleva icono: para un FAB con etiqueta se usa el medium.</p>
+
+    <p>
+        <button class="rdm-button--fab-large" aria-label="Editar">
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">edit</span></div>
+                </div>
+            </div>
+        </button>
+
+        <button class="rdm-button--fab-large" aria-label="Agregar">
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
+                </div>
+            </div>
+        </button>
+
+        <button class="rdm-button--fab-large" aria-label="Eliminar" disabled>
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">delete</span></div>
+                </div>
+            </div>
+        </button>
+    </p>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 
 </main>
 

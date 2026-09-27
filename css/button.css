@@ -9,7 +9,16 @@ button{
     border-radius: 20em;
     border: none; 
     display: inline-block;
-    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; 
+    /* 160ms. Antes este archivo mezclaba 0.2s en el boton y 0.15s en
+       su state layer: dos ritmos en un solo componente.
+       160ms es lo que ya usan textfield.css, search.css y fileinput.css,
+       asi que el boton se alinea con la mayoria de la libreria.
+       PENDIENTE (proyecto global): unificar todo a los tokens de motion
+       de M3, que son 50/100/250/300/400/450/600ms con
+       cubic-bezier(0.2, 0, 0, 1). Hoy list.css usa 0.3s y 0.15s en
+       segundos, y search.css tiene un 240ms suelto en el trailing icon,
+       asi que la libreria todavia no tiene un unico ritmo. */
+    transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
     vertical-align: middle;
     cursor: pointer;
     user-select: none;
@@ -26,12 +35,22 @@ button{
     align-items: center;
     box-sizing: border-box;
     height: 2.5em;         /* 40dp — M3 fija el alto del boton */
+    /* Padding base de 24dp a ambos lados, que es lo que M3 pide para un
+       boton SIN icono. Cuando hay icono, el margen negativo del media
+       (ver mas abajo) deja el lado del icono en 16dp.
+
+       OJO, esto parece un bug y NO lo es. La spec de M3 para buttons
+       define padding asimetrico cuando hay leading icon:
+         sin icono  -> 24dp | label | 24dp
+         con icono  -> 16dp | icono 18dp | gap 8dp | label | 24dp
+       El trailing de 24dp es correcto. No "arreglarlo" a 1em. */
     padding: 0 1.5em;      /* solo horizontal: el alto lo da height */
 }
 
 /* El container llena el boton cuando este tiene alto propio (FAB) */
 .rdm-button--fab .rdm-button--container,
-.rdm-button--fab-small .rdm-button--container {
+.rdm-button--fab-small .rdm-button--container,
+.rdm-button--fab-large .rdm-button--container {
     height: 100%;
 }
 
@@ -113,6 +132,32 @@ button{
     }
 
 
+/*FAB large - M3: 96x96, radio 28dp, icono 36dp, elevacion level 3
+   A diferencia del FAB medium, el large de M3 es cuadrado y solo lleva
+   icono. Para un FAB con etiqueta usar el medium. */
+.rdm-button--fab-large{
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    box-shadow: var(--md-sys-elevation-level3);
+    height: 6em;           /* 96dp */
+    width: 6em;
+    border-radius: 1.75em; /* 28dp */
+}
+
+.rdm-button--fab-large .rdm-button--container {
+    height: 100%;
+    padding: 0;
+}
+
+.rdm-button--fab-large .rdm-button--media {
+    margin: 0;
+}
+
+    /* material design icons */
+    .rdm-button--fab-large .material-symbols-rounded, .rdm-button--fab-large .material-symbols-outlined {
+        font-size: 2.25em;  /* 36dp */
+        align-self: center;
+    }
 /*FAB small - M3: primary-container + on-primary-container*/
 .rdm-button--fab-small{
     background-color: var(--md-sys-color-primary-container);
@@ -190,6 +235,42 @@ button{
    box-shadow a todo <button> del proyecto, incluidos tonal, filled,
    outlined y text que en M3 deben quedar planos. */
 
+/* ===== Icon button (solo icono) - M3 =====
+   Modificador de TAMANO, no una variante. Se combina con una variante
+   para heredar color, state layer y disabled sin duplicar reglas:
+     <button class="rdm-button--filled rdm-button--icon-only">...</button>
+
+   Medidas M3: 40x40 visual, pilora completa (radio = 20dp), icono 24dp
+   centrado. El target tactil recomendado por M3 es 48dp, mayor que los
+   40dp visuales; no se implementa el area expandida aqui. */
+
+.rdm-button--icon-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5em;         /* 40dp */
+    height: 2.5em;        /* 40dp */
+    min-width: 2.5em;
+    padding: 0;
+}
+
+.rdm-button--icon-only .rdm-button--container {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+/* El media no debe aplicar el margen del boton con etiqueta */
+.rdm-button--icon-only .rdm-button--media {
+    margin: 0;
+}
+
+/* Icono 24dp segun M3 (el de boton con etiqueta es 18dp) */
+.rdm-button--icon-only .rdm-button--icon .material-symbols-rounded,
+.rdm-button--icon-only .rdm-button--icon .material-symbols-outlined {
+    font-size: 1.5em;
+    align-self: center;
+}
 /* ===== Estado disabled (M3) =====
    38% de opacidad sobre container y etiqueta, sin elevacion y sin
    state layer. pointer-events:none evita el hover y el ripple.
@@ -201,7 +282,8 @@ button{
 .rdm-button--outlined:disabled,
 .rdm-button--text:disabled,
 .rdm-button--fab:disabled,
-.rdm-button--fab-small:disabled {
+.rdm-button--fab-small:disabled,
+.rdm-button--fab-large:disabled {
     opacity: 0.38;
     box-shadow: none;
     pointer-events: none;
@@ -214,7 +296,8 @@ button{
 .rdm-button--outlined:disabled::after,
 .rdm-button--text:disabled::after,
 .rdm-button--fab:disabled::after,
-.rdm-button--fab-small:disabled::after {
+.rdm-button--fab-small:disabled::after,
+.rdm-button--fab-large:disabled::after {
     opacity: 0;
 }
 /* ===== State layers M3 =====
@@ -230,14 +313,15 @@ button{
 .rdm-button--outlined::after,
 .rdm-button--text::after,
 .rdm-button--fab::after,
-.rdm-button--fab-small::after {
+.rdm-button--fab-small::after,
+.rdm-button--fab-large::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.15s ease, background-color 0.15s ease;
+    transition: opacity 160ms ease, background-color 160ms ease;
 }
 
 /* Filled -> capa on-primary (blanco sobre morado) */
@@ -260,6 +344,8 @@ button{
 
 /* FAB -> capa on-primary-container */
 .rdm-button--fab:hover::after,
-.rdm-button--fab-small:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 8%, transparent); opacity: 1; }
+.rdm-button--fab-small:hover::after,
+.rdm-button--fab-large:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 8%, transparent); opacity: 1; }
 .rdm-button--fab:active::after,
-.rdm-button--fab-small:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 12%, transparent); opacity: 1; }
+.rdm-button--fab-small:active::after,
+.rdm-button--fab-large:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 12%, transparent); opacity: 1; }
