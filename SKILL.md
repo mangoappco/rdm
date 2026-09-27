@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.10** - Auditoria de **Buttons** contra M3 (Fase 1): `tonal` corregido de `primary-container` + `primary` a `secondary-container` + `on-secondary-container` (el morado sobre morado palido daba contraste pobre); `elevated` corregido de `surface` (identico al fondo del body, invisible sin la sombra) a `surface-container-low`; `fab` y `fab-small` de `tertiary-container` a `primary-container`. State layers unificados a **8% hover / 12% pressed** en las 6 variantes y migrados de 24 reglas `rgba` duplicadas por tema a 12 reglas con `color-mix` sobre el token, que siguen al tema automaticamente
 - **v1.9** - Corrección de la capa de tokens: 60 referencias rotas (`-height` → `-line-height`, `-tracking` → `-letter-spacing`) que impedían aplicar line-height y letter-spacing en las 30 clases de tipografía; `font-weight` sin unidad px, `font-style` normalizado, `text-transform`/`text-decoration` añadidos y token `surface-dim` creado. **Alineación vertical de Lists alineada a M3** (one/two-line centrados, three-line+ top con 16dp de aire) y alturas 56/72dp exactas. Nuevo **tercer rol `rdm-list--body-value`** (label 14/20 weight 500 + `tabular-nums`) para precios/SKU/stock, y eliminación de los wrappers `rdm-sys-typography--*` redundantes en el body de listas
 - **v1.8** - Empty State (patrón M3: icono + headline + support + action, con a11y), Card con lista interna (`.rdm-card--list` ortogonal a los 3 tipos de card + variante `--divided`), y **alineación M3 de Lists**: alturas one-line 56dp / two-line 72dp / three-line 88dp, leading icon 24dp y state layers hover 8% / pressed 12%. File Input se simplifica a variante minimalista (label fijo sin transición) y la demo queda en 2 variantes
 - **v1.7** - Componente File Input MD3: Input de archivo/imagen sin componente nativo MD3, 3 variantes (TextField File, DropZone, Button File), single/multiple, preview con chips e imagen, drag & drop, validación `accept`/`data-max-size`, estados error/disabled y API `file-selected`/`file-cleared`
@@ -1176,6 +1177,75 @@ $used = (Select-String -Path css\*.css,css\md\*.css -Pattern "var\(\s*(--[\w-]+)
 
 - **Tokens de elevación:** `--md-sys-elevation-level1..5` se mencionan en la doc pero **no existen** en `tokens.css`. Todos los `box-shadow` siguen hardcodeados en cada CSS. Pendiente de tokenizar.
 - **`surface-bright`:** tampoco definido (aún no referenciado, así que no rompe nada).
+
+---
+
+## Buttons
+
+### Tokens por variante (M3)
+
+| Variante | Container | Label | Estado |
+|---|---|---|---|
+| `.rdm-button--elevated` | `surface-container-low` | `primary` | corregido v1.10 |
+| `.rdm-button--filled` | `primary` | `on-primary` | correcto |
+| `.rdm-button--tonal` | `secondary-container` | `on-secondary-container` | corregido v1.10 |
+| `.rdm-button--outlined` | `transparent` | `primary` | correcto |
+| `.rdm-button--text` | `transparent` | `primary` | correcto |
+| `.rdm-button--fab` | `primary-container` | `on-primary-container` | corregido v1.10 |
+| `.rdm-button--fab-small` | `primary-container` | `on-primary-container` | corregido v1.10 |
+
+**Correcciones de la auditoria (Fase 1):**
+- `tonal` usaba `primary-container` + `primary` (morado sobre morado palido, contraste pobre) -> ahora `secondary-container` + `on-secondary-container`
+- `elevated` usaba `surface` (`#FFFBFE`), identico al fondo del body, asi que era invisible salvo por la sombra -> ahora `surface-container-low` (`#F7F2FA`)
+- `fab` / `fab-small` usaban `tertiary-container` -> ahora `primary-container`
+
+### State layers (M3)
+
+Hover **8%** y pressed **12%**, uniformes en las 6 variantes. El color de la capa es el mismo *on* que usa la etiqueta, resuelto con `color-mix` sobre el token:
+
+```css
+.rdm-button--filled:hover::after {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-primary) 8%, transparent);
+}
+```
+
+**Por que `color-mix` y no `rgba` hardcodeado:** antes habia 24 reglas duplicadas `html[data-theme="light"]` / `[data-theme="dark"]` con valores que iban de 0.05 a 0.24. Como `js/theme_toggle.js` reescribe los tokens en runtime, un `color-mix` sobre el token sigue al tema automaticamente y no necesita duplicacion. Las 24 reglas quedaron en 12, sin variantes de tema.
+
+| Variante | Token de la capa |
+|---|---|
+| filled | `on-primary` |
+| tonal | `on-secondary-container` |
+| elevated | `on-surface` |
+| outlined / text | `primary` |
+| fab / fab-small | `on-primary-container` |
+
+### Geometria verificada
+
+| Elemento | Valor | Spec M3 |
+|---|---|---|
+| Shape comun | `border-radius: 20em` (pildora) | fully rounded OK |
+| Icono leading | `1.125em` = 18px | 18dp OK |
+| Gap icono-label | 8px via `margin-left: -0.5em` | 8dp OK |
+| Padding leading | 16px (`1.5em - 0.5em`) | 16dp OK |
+| FAB medium | `3.5em` + `1em` | 56dp + 16dp OK |
+| FAB small | `2.5em` + `0.75em` | 40dp + 12dp OK |
+
+El margen negativo en `.rdm-button--media` existe para que el padding de 24px del container se convierta en 16dp reales cuando hay icono.
+
+### Desviaciones pendientes
+
+| # | Desviacion | Nota |
+|---|---|---|
+| 1 | `button:hover` / `button:active` aplican `box-shadow` a **todo** `<button>` | Selector global. M3 solo da elevacion a elevated y FAB; tonal, filled, outlined y text deben quedar planos |
+| 2 | Las sombras son **Material 2** | M3 level 1 = `0 1px 2px rgba(0,0,0,.30), 0 1px 3px 1px rgba(0,0,0,.15)`. Mismo valor M2 en `card.css:34` y `form.css:33` |
+| 3 | **Sin tokens de elevacion** en `tokens.css` | Todas las sombras estan hardcodeadas |
+| 4 | **Sin altura de 40dp** | El alto sale de `padding: 0.7em` + line-height. Con `label-large` da 42.4px, y cambia si el label usa otra tipografia |
+| 5 | **Sin estado `disabled`** | Cero reglas `:disabled`. M3 pide 38% de opacidad, `pointer-events: none` y sin elevacion |
+| 6 | Falta boton de solo icono | M3: 40x40, fully rounded, variantes estandar, filled, tonal y outlined |
+| 7 | Falta Large FAB | M3: 96x96 con radio 28dp |
+| 8 | `transition: 0.2s ease` | M3 no tiene 200ms; sus duraciones son 50/100/250/300/400/450/600ms con easing `cubic-bezier(0.2, 0, 0, 1)` |
+| 9 | Padding trailing 24px | M3 pide 16dp al final. Pendiente de confirmar en la spec |
+| 10 | Dimensiones en `em` escalan en movil | `estilos.css:264` pone `body { font-size: 15px }` bajo 530px, asi que los 40dp se vuelven ~39px. Decision del proyecto, afecta a toda la libreria |
 
 ---
 

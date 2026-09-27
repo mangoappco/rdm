@@ -91,10 +91,10 @@ button{
     z-index: 200;
 }
 
-/*FAB*/
+/*FAB - M3: primary-container + on-primary-container*/
 .rdm-button--fab{
-    background-color: var(--md-sys-color-tertiary-container);
-    color: var(--md-sys-color-on-tertiary-container);
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
     box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
     height: 3.5em;
     border-radius: 1em;
@@ -106,10 +106,10 @@ button{
     }
 
 
-/*FAB small*/
+/*FAB small - M3: primary-container + on-primary-container*/
 .rdm-button--fab-small{
-    background-color: var(--md-sys-color-tertiary-container);
-    color: var(--md-sys-color-on-tertiary-container);
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
     box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
     height: 2.5em;
     width: 2.5em;
@@ -132,9 +132,9 @@ button{
 
 
 
-/*Elevated*/
+/*Elevated - M3: surface-container-low + primary + elevation level 1*/
 .rdm-button--elevated{
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-surface-container-low);
     color: var(--md-sys-color-primary);
     box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
@@ -145,10 +145,10 @@ button{
     color: var(--md-sys-color-on-primary);
 }
 
-/*Tonal*/
+/*Tonal - M3: secondary-container + on-secondary-container*/
 .rdm-button--tonal{
-    background-color: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
 }
 
 /*Outlined*/
@@ -184,52 +184,18 @@ button:active {
     box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
 }
 
-/* Overlay de estado con pseudo-elemento siguiendo la forma del botón */
+/* ===== State layers M3 =====
+   Hover 8% y pressed 12%, uniformes en todas las variantes.
+   El color de la capa es el mismo "on" que usa la etiqueta, por eso se
+   resuelve con color-mix sobre el token en vez de rgba hardcodeado:
+   asi el layer sigue al tema automaticamente (js/theme_toggle.js
+   reescribe los tokens en runtime) y no necesita reglas duplicadas. */
+
 .rdm-button--filled::after,
 .rdm-button--tonal::after,
 .rdm-button--elevated::after,
 .rdm-button--outlined::after,
-.rdm-button--text::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease, background-color 0.15s ease;
-}
-
-/* Filled */
-html[data-theme="light"] .rdm-button--filled:hover::after { background-color: rgba(0,0,0,0.12); opacity: 1; }
-html[data-theme="light"] .rdm-button--filled:active::after { background-color: rgba(0,0,0,0.18); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--filled:hover::after { background-color: rgba(255,255,255,0.18); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--filled:active::after { background-color: rgba(255,255,255,0.24); opacity: 1; }
-
-/* Tonal */
-html[data-theme="light"] .rdm-button--tonal:hover::after { background-color: rgba(0,0,0,0.06); opacity: 1; }
-html[data-theme="light"] .rdm-button--tonal:active::after { background-color: rgba(0,0,0,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--tonal:hover::after { background-color: rgba(255,255,255,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--tonal:active::after { background-color: rgba(255,255,255,0.14); opacity: 1; }
-
-/* Elevated */
-html[data-theme="light"] .rdm-button--elevated:hover::after { background-color: rgba(0,0,0,0.06); opacity: 1; }
-html[data-theme="light"] .rdm-button--elevated:active::after { background-color: rgba(0,0,0,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--elevated:hover::after { background-color: rgba(255,255,255,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--elevated:active::after { background-color: rgba(255,255,255,0.14); opacity: 1; }
-
-/* Outlined */
-html[data-theme="light"] .rdm-button--outlined:hover::after { background-color: rgba(0,0,0,0.05); opacity: 1; }
-html[data-theme="light"] .rdm-button--outlined:active::after { background-color: rgba(0,0,0,0.09); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--outlined:hover::after { background-color: rgba(255,255,255,0.09); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--outlined:active::after { background-color: rgba(255,255,255,0.13); opacity: 1; }
-
-/* Text */
-html[data-theme="light"] .rdm-button--text:hover::after { background-color: rgba(0,0,0,0.05); opacity: 1; }
-html[data-theme="light"] .rdm-button--text:active::after { background-color: rgba(0,0,0,0.09); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--text:hover::after { background-color: rgba(255,255,255,0.09); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--text:active::after { background-color: rgba(255,255,255,0.13); opacity: 1; }
-
-/* FAB overlays */
+.rdm-button--text::after,
 .rdm-button--fab::after,
 .rdm-button--fab-small::after {
     content: "";
@@ -241,13 +207,26 @@ html[data-theme="dark"]  .rdm-button--text:active::after { background-color: rgb
     transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
-html[data-theme="light"] .rdm-button--fab:hover::after { background-color: rgba(0,0,0,0.06); opacity: 1; }
-html[data-theme="light"] .rdm-button--fab:active::after { background-color: rgba(0,0,0,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--fab:hover::after { background-color: rgba(255,255,255,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--fab:active::after { background-color: rgba(255,255,255,0.14); opacity: 1; }
+/* Filled -> capa on-primary (blanco sobre morado) */
+.rdm-button--filled:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-primary) 8%, transparent); opacity: 1; }
+.rdm-button--filled:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-primary) 12%, transparent); opacity: 1; }
 
-html[data-theme="light"] .rdm-button--fab-small:hover::after { background-color: rgba(0,0,0,0.06); opacity: 1; }
-html[data-theme="light"] .rdm-button--fab-small:active::after { background-color: rgba(0,0,0,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--fab-small:hover::after { background-color: rgba(255,255,255,0.10); opacity: 1; }
-html[data-theme="dark"]  .rdm-button--fab-small:active::after { background-color: rgba(255,255,255,0.14); opacity: 1; }
+/* Tonal -> capa on-secondary-container */
+.rdm-button--tonal:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, transparent); opacity: 1; }
+.rdm-button--tonal:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 12%, transparent); opacity: 1; }
 
+/* Elevated -> capa on-surface */
+.rdm-button--elevated:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent); opacity: 1; }
+.rdm-button--elevated:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent); opacity: 1; }
+
+/* Outlined y Text -> capa primary */
+.rdm-button--outlined:hover::after,
+.rdm-button--text:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent); opacity: 1; }
+.rdm-button--outlined:active::after,
+.rdm-button--text:active::after { background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent); opacity: 1; }
+
+/* FAB -> capa on-primary-container */
+.rdm-button--fab:hover::after,
+.rdm-button--fab-small:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 8%, transparent); opacity: 1; }
+.rdm-button--fab:active::after,
+.rdm-button--fab-small:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 12%, transparent); opacity: 1; }
