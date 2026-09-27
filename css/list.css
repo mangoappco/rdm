@@ -196,6 +196,27 @@ Autor: Danny Estrada
         background-color: var(--bg-color2);
     }
 
+/* Título de grupo dentro de una card que agrupa items de lista.
+   Solo aporta espaciado; la tipografía viene de rdm-sys-typography--title-small.
+   El h2 no debe tener esquinas: los items de lista las llevan. */
+.rdm-card--outlined > h2.rdm-sys-typography--title-small,
+.rdm-card--elevated > h2.rdm-sys-typography--title-small,
+.rdm-card--filled > h2.rdm-sys-typography--title-small,
+.rdm-card--flat > h2.rdm-sys-typography--title-small {
+    margin: 0;
+    padding: 1em 1em 0.5em;
+    color: var(--md-sys-color-on-surface-variant);
+    border-radius: 0;
+}
+
+/* El primer grupo no necesita padding superior extra */
+.rdm-card--outlined > h2.rdm-sys-typography--title-small:first-child,
+.rdm-card--elevated > h2.rdm-sys-typography--title-small:first-child,
+.rdm-card--filled > h2.rdm-sys-typography--title-small:first-child,
+.rdm-card--flat > h2.rdm-sys-typography--title-small:first-child {
+    padding-top: 1em;
+}
+
 /* Overlay de estado siguiendo el tema (data-theme) */
 .rdm-list--container::after {
     content: "";

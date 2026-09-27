@@ -918,7 +918,7 @@ Patrón M3 para búsquedas sin resultados y colecciones vacías. **MD3 no lo def
 
 ---
 
-## Card con lista interna
+## Card List (cardlist.php)
 
 ### Overview
 Extensión del componente Card que permite anidar un `rdm-list--container` dentro de `rdm-card--body` con los items alineados a los bordes de la card (bleed-to-edge) mientras el texto conserva la alineación interna. Ideal para vistas de detalle (datos clave-valor, equipo, sedes).
@@ -1102,6 +1102,31 @@ html[data-theme="dark"]  .rdm-list--container:active::after { background-color: 
 
 ---
 
+## Índice de componentes (`index.php`)
+
+El catálogo es una lista de destinos de navegación. Reglas semánticas aplicadas en v1.9:
+
+| Regla | Motivo |
+|---|---|
+| `<nav aria-label="Component index">` en vez de `<section>` | Es navegación: un lector de pantalla en modo "por landmarks" debe poder saltar directo al índice |
+| Cada categoría es un `<h2 class="rdm-sys-typography--title-small">` real | Antes eran `<!-- COMENTARIOS -->`, invisibles para tecnología asistiva. Ahora aparecen en la lista de encabezados |
+| Títulos de categoría **en inglés** | Coherencia con los nombres de archivo (`textfields.php` → "Text Field") y con el `h1` "Components" |
+| `aria-hidden="true"` en `.rdm-list--leading-icon` | El ligature de Material Symbols es texto real; sin esto el nombre accesible del enlace era "rectangle Container" |
+| Sin wrapper `rdm-sys-typography--*` en el body | Las clases internas son deterministas desde v1.9, el wrapper es ruido |
+| **Sin `<ul>` / `<li>`** | Convención del proyecto: `lists.php` y `cardlist.php` marcan sus items como `<article class="rdm-list--container">` planos. Introducir markup de lista sería inconsistente y además rompería el `:first-child` / `:last-child` de las esquinas en `list.css` |
+
+**Categorías:** Foundations (4) · Basic Components (2) · Input Components (7) · Content Components (7) · Navigation (6) = 26 items.
+
+`Foundations` no es una traducción inventada: es el nombre que usa el propio M3 para el grupo de color, tipografía, shape y elevación.
+
+**Espaciado de los `<h2>`:** solo aportan `padding: 1em 1em 0.5em` y `color: on-surface-variant` con una regla escalonada al tipo de card. No llevan `border-radius` (las esquinas son de los items de lista).
+
+```css
+.rdm-card--outlined > h2.rdm-sys-typography--title-small { margin: 0; padding: 1em 1em 0.5em; }
+```
+
+---
+
 ## Design Tokens (capa `css/md/`)
 
 ### Correcciones de v1.9
@@ -1160,7 +1185,7 @@ $used = (Select-String -Path css\*.css,css\md\*.css -Pattern "var\(\s*(--[\w-]+)
 - **Estado**: ✅ Patrón M3 implementado (v1.8) — a11ydynamics pendiente
 - **Ubicación**: [empty.php](empty.php) / [css/empty.css](css/empty.css)
 
-### Card con lista
+### Card List
 - **Estado**: ✅ Extensión propia (v1.8) — ortogonal a los 3 tipos de card
 - **Ubicación**: [cardlist.php](cardlist.php) / [css/cardlist.css](css/cardlist.css)
 

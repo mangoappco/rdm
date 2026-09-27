@@ -16,7 +16,7 @@
 			<a href="index.php"><div class="rdm-topbar--leading-navigation-icon"><span class="material-symbols-rounded">arrow_back</span></div></a>
 		</div>
 		<div class="rdm-topbar--body">
-			<div class="rdm-sys-typography--title-large"><div class="rdm-topbar--body-headline">Card con lista</div></div>
+			<div class="rdm-sys-typography--title-large"><div class="rdm-topbar--body-headline">Card List</div></div>
 		</div>
         <div class="rdm-topbar--action">
             <div class="rdm-topbar--trailing-icon" id="themeToggle" title="Cambiar tema">
@@ -31,7 +31,7 @@
 
 <main class="rdm--contenedor-toolbar">
 
-    <h1 class="rdm-sys-typography--display-medium">Card con lista interna</h1>
+    <h1 class="rdm-sys-typography--display-medium">Card List</h1>
     <p class="rdm-sys-typography--body-large">Permite mostrar datos estructurados (etiqueta + valor) dentro de una card sin el margen lateral del componente lista. Ideal para vistas de detalle.</p>
 
     <p class="rdm-sys-typography--title-medium">Uso básico: se agrega la clase rdm-card--list al contenedor de la card.</p>
