@@ -287,7 +287,7 @@
 
     <!-- 8. Three-line -->
     <h1 class="rdm-sys-typography--display-medium">8. Three-line</h1>
-    <p class="rdm-sys-typography--body-large">Replica el patrón three-line del componente lista: headline, texto de apoyo largo y una tercera línea de valor.</p>
+    <p class="rdm-sys-typography--body-large">Replica el patrón three-line con un tercer rol de valor: el precio usa <code>rdm-list--body-value</code> (label 14/20 weight 500) y no un headline, así convive con el nombre y la descripción sin competir con ninguno.</p>
 
     <article class="rdm-card--container">
         <div class="rdm-card--elevated rdm-card--list">
@@ -299,9 +299,9 @@
                         <div class="rdm-list--leading-image" style="background-image: url(img/1.jpg);"></div>
                     </div>
                     <div class="rdm-list--body">
-                        <div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Bandeja de la casa</div></div>
-                        <div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Salmón, arroz, vegetales y acompañamiento de sopa miso.</div></div>
-                        <div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$ 32.500</div></div>
+                        <div class="rdm-list--body-headline">Bandeja de la casa</div>
+                        <div class="rdm-list--body-suporting-text">Salmón, arroz, vegetales y acompañamiento de sopa miso.</div>
+                        <div class="rdm-list--body-value">$ 32.500</div>
                     </div>
                 </div>
 
@@ -310,9 +310,9 @@
                         <div class="rdm-list--leading-icon"><span class="material-symbols-rounded">local_fire_department</span></div>
                     </div>
                     <div class="rdm-list--body">
-                        <div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Parrilla de la casa</div></div>
-                        <div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Carnes a la parrilla, acompañadas de guarnición.</div></div>
-                        <div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$ 41.000</div></div>
+                        <div class="rdm-list--body-headline">Parrilla de la casa</div>
+                        <div class="rdm-list--body-suporting-text">Carnes a la parrilla, acompañadas de guarnición.</div>
+                        <div class="rdm-list--body-value">$ 41.000</div>
                     </div>
                     <div class="rdm-list--action">
                         <div class="rdm-list--trailing-icon"><span class="material-symbols-rounded">add_shopping_cart</span></div>

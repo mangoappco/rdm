@@ -2,7 +2,7 @@
 
 ## Historial de Versiones
 
-- **v1.9** - Corrección de la capa de tokens: 60 referencias rotas (`-height` → `-line-height`, `-tracking` → `-letter-spacing`) que impedían aplicar line-height y letter-spacing en las 30 clases de tipografía; `font-weight` sin unidad px, `font-style` normalizado, `text-transform`/`text-decoration` añadidos y token `surface-dim` creado. **Alineación vertical de Lists alineada a M3** (one/two-line centrados, three-line+ top con leading y trailing sobre la primera línea) y alturas exactas 56/72/88dp
+- **v1.9** - Corrección de la capa de tokens: 60 referencias rotas (`-height` → `-line-height`, `-tracking` → `-letter-spacing`) que impedían aplicar line-height y letter-spacing en las 30 clases de tipografía; `font-weight` sin unidad px, `font-style` normalizado, `text-transform`/`text-decoration` añadidos y token `surface-dim` creado. **Alineación vertical de Lists alineada a M3** (one/two-line centrados, three-line+ top con 16dp de aire) y alturas 56/72dp exactas. Nuevo **tercer rol `rdm-list--body-value`** (label 14/20 weight 500 + `tabular-nums`) para precios/SKU/stock, y eliminación de los wrappers `rdm-sys-typography--*` redundantes en el body de listas
 - **v1.8** - Empty State (patrón M3: icono + headline + support + action, con a11y), Card con lista interna (`.rdm-card--list` ortogonal a los 3 tipos de card + variante `--divided`), y **alineación M3 de Lists**: alturas one-line 56dp / two-line 72dp / three-line 88dp, leading icon 24dp y state layers hover 8% / pressed 12%. File Input se simplifica a variante minimalista (label fijo sin transición) y la demo queda en 2 variantes
 - **v1.7** - Componente File Input MD3: Input de archivo/imagen sin componente nativo MD3, 3 variantes (TextField File, DropZone, Button File), single/multiple, preview con chips e imagen, drag & drop, validación `accept`/`data-max-size`, estados error/disabled y API `file-selected`/`file-cleared`
 - **v1.6** - Componente Snackbar MD3: Notificaciones flotantes breves (neutral, success, error, warning, info), soporte para acción interactiva, auto-dismiss con pausa en hover y API dual (declarativa y RDM.snackbar.show)
@@ -1043,14 +1043,37 @@ Va al final del bloque para ganar por orden de fuente (misma especificidad).
 
 ### Tipografía de los items (determinista)
 
-Las alturas solo son exactas si el texto tiene line-height fijo, así que `.rdm-list--body-headline` y `--body-suporting-text` declaran su propia tipografía y **no dependen** de que el autor los envuelva en `rdm-sys-typography--*`:
+Las alturas solo son exactas si el texto tiene line-height fijo, así que los tres roles del body declaran su propia tipografía y **no dependen** de que el autor los envuelva en `rdm-sys-typography--*`:
 
-| Elemento | Token | Tamaño / line-height |
-|---|---|---|
-| `.rdm-list--body-headline` | `body-large` | 16px / 24px |
-| `.rdm-list--body-suporting-text` | `body-medium` | 14px / 20px |
+| Rol | Clase | Token M3 | Tamaño / line-height | Peso | Color |
+|---|---|---|---|---|---|
+| Nombre | `.rdm-list--body-headline` | `body-large` | 16px / 24px | 400 | `on-surface` |
+| Descripción | `.rdm-list--body-suporting-text` | `body-medium` | 14px / 20px | 400 | `on-surface-variant` |
+| **Valor** | `.rdm-list--body-value` | **`label-large`** | **14px / 20px** | **500** | `on-surface` |
 
-Ambos con `margin: 0` (los márgenes ad-hoc `0.09em` / `0.04em` de v1.7 sumaban ~6px y rompían la cuenta).
+Los tres con `margin: 0` (los márgenes ad-hoc `0.09em` / `0.04em` de v1.7 sumaban ~6px y rompían la cuenta).
+
+### El rol `body-value`
+
+Tercer rol del body para un dato destacado: **precio, SKU, stock, cantidad**. Es el **único bloque con peso 500**, de modo que destaca del nombre y de la descripción sin competir con ninguno, y mantiene la escala de grises del componente en vez de introducir color.
+
+`tabular-nums` hace que los precios se alineen verticalmente entre ítems, lo que permite compararlos de un vistazo en un catálogo.
+
+**Por qué no usar `body-headline` para el precio:** el precio no es un título, es un dato. Usar `body-large` weight 400 lo hacía competir con el nombre del producto porque compartían rol y token. Como efecto secundario, al pasar a `label-large` el three-line baja de `24+20+24 = 68px` a `24+20+20 = 64px`, que es **exactamente la definición de M3** de three-line.
+
+### Markup canónico del body
+
+Los tres roles van **sin wrapper de typography**, en forma plana:
+
+```html
+<div class="rdm-list--body">
+  <div class="rdm-list--body-headline">Bandeja de la casa</div>
+  <div class="rdm-list--body-suporting-text">Salmón, arroz, vegetales y acompañamiento.</div>
+  <div class="rdm-list--body-value">$ 32.500</div>
+</div>
+```
+
+> **Evitar** el patrón `<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">…</div></div>`. Desde v1.9 las clases internas son deterministas, así que el wrapper es redundante. Se eliminó de `cardlist.php` y `lists.php` en v1.9 (20 headlines + 14 supporting).
 
 ### State layers (v1.8)
 

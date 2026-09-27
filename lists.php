@@ -58,7 +58,7 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -76,7 +76,7 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -96,7 +96,7 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -116,7 +116,7 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -136,7 +136,7 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -156,7 +156,7 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -182,8 +182,8 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Suporting text</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Suporting text</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -201,8 +201,8 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Suporting text</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Suporting text</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -222,8 +222,8 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Suporting text</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Suporting text</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -243,8 +243,8 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Suporting text</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Suporting text</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -264,8 +264,8 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Suporting text</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Suporting text</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -285,8 +285,8 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Suporting text</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Suporting text</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -313,9 +313,9 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div></div>
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$10.500</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div>
+					<div class="rdm-list--body-value">$10.500</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -333,9 +333,9 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div></div>
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$10.500</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div>
+					<div class="rdm-list--body-value">$10.500</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -355,9 +355,9 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div></div>
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$10.500</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div>
+					<div class="rdm-list--body-value">$10.500</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -377,9 +377,9 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div></div>
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$10.500</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div>
+					<div class="rdm-list--body-value">$10.500</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -399,9 +399,9 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div></div>
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$10.500</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div>
+					<div class="rdm-list--body-value">$10.500</div>
 				</div>
 
 				<div class="rdm-list--action">
@@ -421,9 +421,9 @@
 				</div>
 
 				<div class="rdm-list--body">
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">Headline</div></div>
-					<div class="rdm-sys-typography--body-medium"><div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div></div>
-					<div class="rdm-sys-typography--body-large"><div class="rdm-list--body-headline">$10.500</div></div>
+					<div class="rdm-list--body-headline">Headline</div>
+					<div class="rdm-list--body-suporting-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde cupiditate tenetur ipsam quasi vero quaerat aliquam amet, enim, quam eius ipsum magnam reiciendis architecto dicta maxime quae voluptas autem facere.</div>
+					<div class="rdm-list--body-value">$10.500</div>
 				</div>
 
 				<div class="rdm-list--action">

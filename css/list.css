@@ -141,6 +141,22 @@ Autor: Danny Estrada
         background-color: var(--bg-color2);
     }
 
+    /* body value — tercer rol del body: un dato destacado (precio, SKU, stock)
+       Rol label de M3: 14/20 weight 500. Es el único bloque con peso 500, así
+       que destaca del nombre (400) y de la descripción (400 on-surface-variant)
+       sin competir con ninguno. tabular-nums alinea los dígitos en columna
+       para comparar precios de un vistazo. */
+    .rdm-list--body-value {
+        margin: 0;
+        font-size: var(--md-sys-typescale-label-large-font-size);
+        line-height: var(--md-sys-typescale-label-large-line-height);
+        font-weight: var(--md-sys-typescale-label-large-font-weight);
+        letter-spacing: var(--md-sys-typescale-label-large-letter-spacing);
+        color: var(--md-sys-color-on-surface);
+        font-variant-numeric: tabular-nums;
+        background-color: var(--bg-color2);
+    }
+
 /* list action elements */
 .rdm-list--action {
     display: flex;
