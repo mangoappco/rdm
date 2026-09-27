@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.14** - Reconstruccion de `elevation.php` y resurreccion de `css/elevation.css` (estaba muerto). La version anterior mapeaba el tipo de card a los niveles de elevacion, lo cual es incorrecto: en M3 el tipo de card y el nivel de elevacion son ortogonales. Se elimino el concepto paralelo `rdm-sys-elevation--*` que duplicaba `rdm-card--*`. La pagina nueva demuestra los dos sistemas de profundidad de M3: elevacion por sombra (levels 0-5) y elevacion tonal (surface-container-lowest a highest), mas una tabla de que componente usa que nivel
 - **v1.13** - Large FAB segun M3 (96x96, radio 28dp, icono 36dp, elevacion level 3), incluido en los selectores de state layer y disabled. Se documenta tambien la spec de padding asimetrico de M3 verificada (sin icono 24/24, con icono 16 start / 24 end, gap 8dp) que el proyecto ya cumplia con el margen negativo del media
 - **v1.12** - Boton de solo icono segun M3: `.rdm-button--icon-only` como modificador de tamano (no variante) para heredar color, state layer y disabled de cualquier variante, 40x40 visual con icono 24dp, demostrado en `buttons.php` con las 5 variantes y con `aria-label`. Motion: `button.css` unificado a 160ms (antes mezclaba 0.2s en el boton y 0.15s en el state layer del mismo archivo)
 - **v1.11** - Fases 2 y 3 de la auditoria de **Buttons**: altura fija de 40dp en `.rdm-button--container` (antes 42.4px por padding, y fragil ante cambios de tipografia) con padding solo horizontal y `align-items: center`; estado `disabled` al 38% de opacidad sin elevacion ni state layer, demostrado en `buttons.php`; eliminadas las reglas globales `button:hover` / `button:active` que anadian `box-shadow` a todo `<button>` (en M3 la elevacion es estatica y solo la tienen elevated y FAB); anadidos los tokens `--md-sys-elevation-level0..5` a `tokens.css` y reemplazo de las 5 sombras de Material 2 por tokens: elevated nivel 1, FAB nivel 3, card elevated nivel 1, form elevated nivel 1
@@ -1178,7 +1179,7 @@ $used = (Select-String -Path css\*.css,css\md\*.css -Pattern "var\(\s*(--[\w-]+)
 
 ### Pendiente conocido
 
-- **Tokens de elevación:** `--md-sys-elevation-level1..5` se mencionan en la doc pero **no existen** en `tokens.css`. Todos los `box-shadow` siguen hardcodeados en cada CSS. Pendiente de tokenizar.
+- **Tokens de elevacion:** RESUELTO en v1.11. Se anadieron `--md-sys-elevation-level0..5` y se reemplazaron las sombras de Material 2 en `button.css`, `card.css` y `form.css`.
 - **`surface-bright`:** tampoco definido (aún no referenciado, así que no rompe nada).
 
 ---
@@ -1384,6 +1385,51 @@ Migrar la librería completa a los tokens de motion de M3 es un proyecto global 
 | 2 | Dimensiones en `em` escalan en movil | `estilos.css:264` pone `body { font-size: 15px }` bajo 530px, asi que los 40dp se vuelven ~39px. Decision del proyecto, afecta a toda la libreria |
 
 ---
+
+## Elevation (elevation.php)
+
+No es un componente, es una demostracion de los dos sistemas de profundidad de M3.
+
+### Por que se reconstruyo
+
+La version anterior era incorrecta: mapeaba el **tipo de card** a los niveles de elevacion (outlined = "Level 0", elevated = "Level 1", filled = "Level 2"). En M3 el tipo de card y el nivel de elevacion son **ortogonales**: un card filled no es "nivel 2" de nada. Ademas `css/elevation.css` estaba muerto (no importado) y definiendo un concepto paralelo `rdm-sys-elevation--elevated / --filled / --outlined` que duplicaba `rdm-card--*`.
+
+Ahora la pagina demuestra los tokens reales.
+
+### Los dos sistemas de M3
+
+| Sistema | Cuando se usa | Tokens |
+|---|---|---|
+| **Sombra** | Elementos que flotan sobre la pagina: FAB, menus, dialogs | `--md-sys-elevation-level0..5` |
+| **Tonal** | Contenedores y superficies: cards, listas, sheets | `--md-sys-color-surface-container-lowest..highest` |
+
+La via tonal es la recomendada para contenedores: separa por color de superficie, sin sombra. Es ademas lo que hace que `rdm-button--elevated` use `surface-container-low` en vez de `surface`.
+
+### Asignacion actual del proyecto
+
+| Componente | Sistema | Token |
+|---|---|---|
+| `.rdm-button--elevated` | sombra + tonal | `level1` + `surface-container-low` |
+| `.rdm-button--fab` / `--fab-large` / `--fab-small` | sombra | `level3` |
+| `.rdm-card--elevated` | sombra | `level1` |
+| `.rdm-form--elevated` | sombra | `level1` |
+
+### Clases de la demo
+
+```
+.rdm-elevation--wrapper            /* columna vertical */
+.rdm-elevation--demo               /* swatch base: surface-container-low + radius 12dp */
+├── --level0..--level5             /* aplica box-shadow del token */
+├── --surface-lowest               /* aplica el color de superficie */
+├── --surface-low
+├── --surface
+├── --surface-high
+└── --surface-highest
+.rdm-elevation--title              /* headline del swatch */
+.rdm-elevation--token              /* nombre del token, monoespaciado */
+.rdm-elevation--grid               /* rejilla comparativa */
+.rdm-elevation--row
+```
 
 ## Componentes Relacionados
 

@@ -43,147 +43,101 @@
 
 <main class="rdm--contenedor-toolbar">
 
-    <!-- Filled card -->
+    <h1 class="rdm-sys-typography--display-medium">Elevation</h1>
+    <p class="rdm-sys-typography--body-large">M3 tiene dos formas de expresar jerarquia de profundidad. La <strong>elevacion por sombra</strong> se usa en elementos que flotan sobre la pagina (FAB, menus, dialogs). La <strong>elevacion tonal</strong> se usa en contenedores y se logra con los pasos de superficie, sin sombra. Esta pagina demuestra las dos.</p>
 
-    <h1 class="rdm-sys-typography--display-medium">Level 0</h1>
+    <!-- ============ ELEVACION POR SOMBRA ============ -->
 
-    <!-- Card container -->
-    <article class="rdm-card--container">
+    <h1 class="rdm-sys-typography--display-medium">Elevacion por sombra</h1>
+    <p class="rdm-sys-typography--body-large">Los seis niveles de Material Design 3, definidos en <code>css/md/tokens.css</code> como <code>--md-sys-elevation-level0..5</code>. El nivel 0 no lleva sombra.</p>
 
-        <!-- Card type: filled, elevated, outlined -->
-        <div class=" rdm-card--outlined">            
+    <div class="rdm-elevation--wrapper">
 
-            <!-- Body section -->
-            <div class="rdm-card--body">
-                <h2 class="rdm-sys-typography--display-small">Headline</h2>
-                <h3 class="rdm-sys-typography--title-large">Subhead</h3>
-                <p class="rdm-sys-typography--body-large">Body large. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum voluptates ullam sunt explicabo et veniam consequuntur eius dolore. Quisquam fuga ipsam optio quibusdam expedita sunt tempora odit totam ab aperiam.</p>
-            </div>
-
-            <!-- Action section aligment: left, center, right -->
-            <div class="rdm-card--action-left">
-            <p>
-                <!-- button -->
-                <button class="rdm-button--filled">
-                <div class="rdm-button--container">
-                    <div class="rdm-button--media">
-                        <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-                    </div>
-                    <div class="rdm-button--body">
-                        <span class="rdm-sys-typography--label-large">Button</span>
-                    </div>
-                </div>
-                </button>
-
-                <!-- button -->
-                <button class="rdm-button--filled">
-                <div class="rdm-button--container">
-                    <div class="rdm-button--body">
-                        <span class="rdm-sys-typography--label-large">Button</span>
-                    </div>
-                </div>
-                </button>
-            
-            </p> 
-            </div>
-
+        <div class="rdm-elevation--demo rdm-elevation--level0">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Level 0</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">--md-sys-elevation-level0: none</p>
         </div>
-    </article>
-    
-    <!-- Elevated card -->
 
-    <h1 class="rdm-sys-typography--display-medium">Level 1</h1>
-
-    <!-- Card container -->
-    <article class="rdm-card--container">
-
-        <!-- Card type: filled, elevated, outlined -->
-        <div class=" rdm-card--elevated">            
-
-            <!-- Body section -->
-            <div class="rdm-card--body">
-                <h2 class="rdm-sys-typography--display-small">Headline</h2>
-                <h3 class="rdm-sys-typography--title-large">Subhead</h3>
-                <p class="rdm-sys-typography--body-large">Body large. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum voluptates ullam sunt explicabo et veniam consequuntur eius dolore. Quisquam fuga ipsam optio quibusdam expedita sunt tempora odit totam ab aperiam.</p>
-            </div>
-
-            <!-- Action section aligment: left, center, right -->
-            <div class="rdm-card--action-right">
-            <p>
-                <!-- button -->
-                <button class="rdm-button--filled">
-                <div class="rdm-button--container">
-                    <div class="rdm-button--media">
-                        <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-                    </div>
-                    <div class="rdm-button--body">
-                        <span class="rdm-sys-typography--label-large">Button</span>
-                    </div>
-                </div>
-                </button>
-
-                <!-- button -->
-                <button class="rdm-button--filled">
-                <div class="rdm-button--container">
-                    <div class="rdm-button--body">
-                        <span class="rdm-sys-typography--label-large">Button</span>
-                    </div>
-                </div>
-                </button>
-            
-            </p> 
-            </div>
-            
+        <div class="rdm-elevation--demo rdm-elevation--level1">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Level 1</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">0 1px 2px 0 rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.15)</p>
         </div>
-    </article>
 
-    <!-- Outlined card -->
-
-    <h1 class="rdm-sys-typography--display-medium">Level 2</h1>
-
-    <!-- Card container -->
-    <article class="rdm-card--container">
-
-        <!-- Card type: filled, elevated, outlined -->
-        <div class=" rdm-card--filled">
-
-            <!-- Body section -->
-            <div class="rdm-card--body">
-                <h2 class="rdm-sys-typography--display-small">Headline</h2>
-                <h3 class="rdm-sys-typography--title-large">Subhead</h3>
-                <p class="rdm-sys-typography--body-large">Body large. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum voluptates ullam sunt explicabo et veniam consequuntur eius dolore. Quisquam fuga ipsam optio quibusdam expedita sunt tempora odit totam ab aperiam.</p>
-            </div>
-
-            <!-- Action section aligment: left, center, right -->
-            <div class="rdm-card--action-left">
-            <p>
-                <!-- button -->
-                <button class="rdm-button--filled">
-                <div class="rdm-button--container">
-                    <div class="rdm-button--media">
-                        <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
-                    </div>
-                    <div class="rdm-button--body">
-                        <span class="rdm-sys-typography--label-large">Button</span>
-                    </div>
-                </div>
-                </button>
-
-                <!-- button -->
-                <button class="rdm-button--filled">
-                <div class="rdm-button--container">
-                    <div class="rdm-button--body">
-                        <span class="rdm-sys-typography--label-large">Button</span>
-                    </div>
-                </div>
-                </button>
-            
-            </p> 
-            </div>
-            
+        <div class="rdm-elevation--demo rdm-elevation--level2">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Level 2</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">0 1px 2px 0 rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15)</p>
         </div>
-    </article>
 
+        <div class="rdm-elevation--demo rdm-elevation--level3">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Level 3</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">0 1px 3px 0 rgba(0,0,0,.3), 0 4px 8px 3px rgba(0,0,0,.15)</p>
+        </div>
+
+        <div class="rdm-elevation--demo rdm-elevation--level4">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Level 4</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">0 2px 4px 0 rgba(0,0,0,.3), 0 6px 10px 4px rgba(0,0,0,.15)</p>
+        </div>
+
+        <div class="rdm-elevation--demo rdm-elevation--level5">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Level 5</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">0 4px 8px 3px rgba(0,0,0,.15), 0 8px 12px 6px rgba(0,0,0,.15)</p>
+        </div>
+
+    </div>
+
+    <!-- ============ ELEVACION TONAL ============ -->
+
+    <h1 class="rdm-sys-typography--display-medium">Elevacion tonal</h1>
+    <p class="rdm-sys-typography--body-large">En M3 los contenedores se separan por color de superficie, no por sombra. Cada nivel usa un <code>surface-container</code> distinto. Esta es la via recomendada para cards, menus y superficies en general.</p>
+
+    <div class="rdm-elevation--wrapper">
+
+        <div class="rdm-elevation--demo rdm-elevation--surface-lowest">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Surface container lowest</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">--md-sys-color-surface-container-lowest</p>
+        </div>
+
+        <div class="rdm-elevation--demo rdm-elevation--surface-low">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Surface container low</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">--md-sys-color-surface-container-low</p>
+        </div>
+
+        <div class="rdm-elevation--demo rdm-elevation--surface">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Surface container</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">--md-sys-color-surface-container</p>
+        </div>
+
+        <div class="rdm-elevation--demo rdm-elevation--surface-high">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Surface container high</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">--md-sys-color-surface-container-high</p>
+        </div>
+
+        <div class="rdm-elevation--demo rdm-elevation--surface-highest">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Surface container highest</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">--md-sys-color-surface-container-highest</p>
+        </div>
+
+    </div>
+
+    <!-- ============ QUIEN USA QUE ============ -->
+
+    <h1 class="rdm-sys-typography--display-medium">Que componente usa que nivel</h1>
+    <p class="rdm-sys-typography--body-large">Referencia rapida de la elevacion asignada a cada componente de la libreria.</p>
+
+    <div class="rdm-elevation--wrapper">
+        <div class="rdm-elevation--demo">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Elevacion por sombra</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">rdm-button--elevated: level1 &nbsp;|&nbsp; rdm-button--fab: level3 &nbsp;|&nbsp; rdm-button--fab-large: level3 &nbsp;|&nbsp; rdm-button--fab-small: level3 &nbsp;|&nbsp; rdm-card--elevated: level1 &nbsp;|&nbsp; rdm-form--elevated: level1</p>
+        </div>
+        <div class="rdm-elevation--demo">
+            <h2 class="rdm-elevation--title rdm-sys-typography--title-large">Elevacion tonal</h2>
+            <p class="rdm-elevation--token rdm-sys-typography--body-medium">rdm-button--elevated: surface-container-low &nbsp;|&nbsp; rdm-list--container dentro de card: hereda el fondo de la card</p>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
 </main>
 
 </body>
