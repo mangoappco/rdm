@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.15** - Housekeeping: eliminados `css/tarjetas.css` (200 lineas) y `css/toolbar.css` (104 lineas), ambos con 0 referencias verificadas en todo el proyecto y ninguno importado. Sus prefijos de clase (`rdm-tarjeta*`, `rdm-toolbar--*`, `rdm-derechos`, `rdm-sys-corner--*`, `logo_img`) no aparecen en ningun `.php` ni `.css`. Los unicos matches eran falsos positivos de `rdm--contenedor-toolbar` (el contenedor de layout, otra clase) y de un icono de Material Symbols llamado toolbar. El proyecto queda con 0 CSS muertos
 - **v1.14** - Reconstruccion de `elevation.php` y resurreccion de `css/elevation.css` (estaba muerto). La version anterior mapeaba el tipo de card a los niveles de elevacion, lo cual es incorrecto: en M3 el tipo de card y el nivel de elevacion son ortogonales. Se elimino el concepto paralelo `rdm-sys-elevation--*` que duplicaba `rdm-card--*`. La pagina nueva demuestra los dos sistemas de profundidad de M3: elevacion por sombra (levels 0-5) y elevacion tonal (surface-container-lowest a highest), mas una tabla de que componente usa que nivel
 - **v1.13** - Large FAB segun M3 (96x96, radio 28dp, icono 36dp, elevacion level 3), incluido en los selectores de state layer y disabled. Se documenta tambien la spec de padding asimetrico de M3 verificada (sin icono 24/24, con icono 16 start / 24 end, gap 8dp) que el proyecto ya cumplia con el margen negativo del media
 - **v1.12** - Boton de solo icono segun M3: `.rdm-button--icon-only` como modificador de tamano (no variante) para heredar color, state layer y disabled de cualquier variante, 40x40 visual con icono 24dp, demostrado en `buttons.php` con las 5 variantes y con `aria-label`. Motion: `button.css` unificado a 160ms (antes mezclaba 0.2s en el boton y 0.15s en el state layer del mismo archivo)
@@ -1375,7 +1376,7 @@ Demostrado en `buttons.php` con las 5 variantes + una deshabilitada. Todos lleva
 
 Ninguno de esos valores es un token de motion de M3, que son **50 / 100 / 250 / 300 / 400 / 450 / 600ms** con easing `cubic-bezier(0.2, 0, 0, 1)`.
 
-Migrar la librería completa a los tokens de motion de M3 es un proyecto global aparte: toca al menos 5 archivos y afecta la percepción de toda la interfaz, así que conviene hacerlo con폭 la librería auditada componente por componente.
+Migrar la librería completa a los tokens de motion de M3 es un proyecto global aparte: toca al menos 5 archivos y afecta la percepción de toda la interfaz, así que conviene hacerlo con la librería auditada componente por componente.
 
 ### Desviaciones pendientes
 
@@ -1431,6 +1432,23 @@ La via tonal es la recomendada para contenedores: separa por color de superficie
 .rdm-elevation--row
 ```
 
+### Housekeeping: CSS muertos eliminados (v1.15)
+
+`css/tarjetas.css` (200 lineas) y `css/toolbar.css` (104 lineas) se eliminaron. Verificacion previa: 0 referencias a sus prefijos de clase (`rdm-tarjeta*`, `rdm-toolbar--*`, `rdm-derechos`, `rdm-sys-corner--*`, `logo_img`) en cualquier `.php` o `.css`, y ninguno estaba importado en `estilos.css`.
+
+Los matches que si aparecian eran falsos positivos:
+- `rdm--contenedor-toolbar`: el contenedor de layout de todas las paginas, clase distinta de `rdm-toolbar--*`
+- `<span class="material-symbols-rounded">toolbar</span>`: un icono cuyo nombre es la palabra toolbar
+
+`css/elevation.css` tambien estaba muerto, pero se revivio con proposito en v1.14 en vez de borrarse: ahora contiene los estilos de la demo de elevacion.
+
+Resultado: **0 CSS muertos** en el proyecto.
+
+### Caracteres CJK espurios (v1.15)
+
+Escaneo de todo el proyecto (`.php`, `.css`, `.js`, `.md`) contra los rangos CJK, hangul y kana. Se encontro **1 solo** caracter espurio, ya commiteado en HEAD: un `U+D3ED` coreano dentro de la nota de motion, que partia la frase "conviene hacerlo con la libreria auditada". Eliminado.
+
+Los caracteres CJK que se habían colado antes en `landing.css` y `form.css` ya estaban resueltos. Metodo de deteccion reutilizable: leer los bytes con `[System.IO.File]::ReadAllBytes` y decodificar con `[System.Text.Encoding]::UTF8.GetString`, nunca con `Get-Content` sin `-Encoding UTF8` (la consola de PowerShell corrompe los acentos en la salida pero no en el archivo).
 ## Componentes Relacionados
 
 ### Empty State
