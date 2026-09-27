@@ -121,6 +121,7 @@ button{
 .rdm-button--fab{
     background-color: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
+    --layer: var(--md-sys-color-on-primary-container);
     box-shadow: var(--md-sys-elevation-level3);
     height: 3.5em;
     border-radius: 1em;
@@ -138,6 +139,7 @@ button{
 .rdm-button--fab-large{
     background-color: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
+    --layer: var(--md-sys-color-on-primary-container);
     box-shadow: var(--md-sys-elevation-level3);
     height: 6em;           /* 96dp */
     width: 6em;
@@ -162,6 +164,7 @@ button{
 .rdm-button--fab-small{
     background-color: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
+    --layer: var(--md-sys-color-on-primary-container);
     box-shadow: var(--md-sys-elevation-level3);
     height: 2.5em;
     width: 2.5em;
@@ -188,6 +191,7 @@ button{
 .rdm-button--elevated{
     background-color: var(--md-sys-color-surface-container-low);
     color: var(--md-sys-color-primary);
+    --layer: var(--md-sys-color-on-surface);
     box-shadow: var(--md-sys-elevation-level1);
 }
 
@@ -195,18 +199,23 @@ button{
 .rdm-button--filled{
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
+    --layer: var(--md-sys-color-on-primary);
 }
 
 /*Tonal - M3: secondary-container + on-secondary-container*/
 .rdm-button--tonal{
     background-color: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
+    --layer: var(--md-sys-color-on-secondary-container);
 }
 
-/*Outlined*/
+/*Outlined - M3: el color del borde es un rol independiente
+   (--md-outlined-button-outline-color) para que un modificador de rol
+   pueda sobreescribirlo sin tener que redeclarar el borde. */
 .rdm-button--outlined{
     background-color: transparent;
     color: var(--md-sys-color-primary);
+    --layer: var(--md-sys-color-primary);
     border: solid 0.0625em var(--md-sys-color-outline);
 }
 
@@ -214,7 +223,52 @@ button{
 .rdm-button--text{
     background-color: transparent;
     color: var(--md-sys-color-primary);
+    --layer: var(--md-sys-color-primary);
     border: none;
+}
+
+/* ===== Rol destructivo (M3) =====
+   NO es una sexta variante. M3 define cinco tipos de boton (elevated,
+   filled, tonal, outlined, text) segun Material Web. Una accion
+   destructiva es cualquier variante cuyo color role se asigna a la
+   paleta Error, por eso esto es un MODIFICADOR y se combina:
+
+     <button class="rdm-button--text rdm-button--destructive">
+
+   Cada combinacion sobreescribe --layer (el color de la capa de estado)
+   y los roles de container y etiqueta. No toca opacity ni el ::after,
+   por eso no colisiona con las reglas de estado de abajo.
+
+   EXCLUSIONES (M3):
+   - No aplica a --fab, --fab-small ni --fab-large. La guia oficial de FAB
+     dice: "Avoid using a FAB for minor or destructive actions, such as:
+     Archive or trash".
+   - No aplica a --elevated. M3 no define esa variante para roles de error.
+   - Debe usarse una sola vez por pantalla, siempre con dialogo de
+     confirmacion, y la etiqueta debe nombrar la accion (WCAG 1.4.1: el
+     color no puede ser el unico portador del significado). */
+
+.rdm-button--text.rdm-button--destructive {
+    color: var(--md-sys-color-error);
+    --layer: var(--md-sys-color-error);
+}
+
+.rdm-button--outlined.rdm-button--destructive {
+    color: var(--md-sys-color-error);
+    --layer: var(--md-sys-color-error);
+    border-color: var(--md-sys-color-error);
+}
+
+.rdm-button--tonal.rdm-button--destructive {
+    background-color: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    --layer: var(--md-sys-color-on-error-container);
+}
+
+.rdm-button--filled.rdm-button--destructive {
+    background-color: var(--md-sys-color-error);
+    color: var(--md-sys-color-on-error);
+    --layer: var(--md-sys-color-on-error);
 }
 
 
@@ -324,28 +378,40 @@ button{
     transition: opacity 160ms ease, background-color 160ms ease;
 }
 
-/* Filled -> capa on-primary (blanco sobre morado) */
-.rdm-button--filled:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-primary) 8%, transparent); opacity: 1; }
-.rdm-button--filled:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-primary) 12%, transparent); opacity: 1; }
+/* Cada variante declara su color de capa en --layer (ver arriba, junto a
+   sus tokens de container y etiqueta). Antes cada variante tenia aqui sus
+   propias reglas hover/active con el token hardcodeado, lo que obligaba a
+   duplicar un par de reglas por cada combinacion variante + rol.
 
-/* Tonal -> capa on-secondary-container */
-.rdm-button--tonal:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, transparent); opacity: 1; }
-.rdm-button--tonal:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 12%, transparent); opacity: 1; }
+   El fallback de --layer NO es decorativo: si una variante futura olvidara
+   declararlo, var(--layer) sin fallback haria invalida la declaracion en
+   tiempo de computacion, background-color caeria a transparent y el hover
+   desapareceria en silencio, sin error en consola. Con el fallback se ve
+   una capa incorrecta en vez de no ver nada.
 
-/* Elevated -> capa on-surface */
-.rdm-button--elevated:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent); opacity: 1; }
-.rdm-button--elevated:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent); opacity: 1; }
+   La especificidad de :is() con argumentos de clase es la de su argumento
+   mas especifico, asi que :is(...):hover::after queda en (0,2,1), igual que
+   las reglas individuales que reemplaza. La cascada no cambia. */
+:is(.rdm-button--elevated,
+    .rdm-button--filled,
+    .rdm-button--tonal,
+    .rdm-button--outlined,
+    .rdm-button--text,
+    .rdm-button--fab,
+    .rdm-button--fab-small,
+    .rdm-button--fab-large):hover::after {
+    background-color: color-mix(in srgb, var(--layer, var(--md-sys-color-on-surface)) 8%, transparent);
+    opacity: 1;
+}
 
-/* Outlined y Text -> capa primary */
-.rdm-button--outlined:hover::after,
-.rdm-button--text:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent); opacity: 1; }
-.rdm-button--outlined:active::after,
-.rdm-button--text:active::after { background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent); opacity: 1; }
-
-/* FAB -> capa on-primary-container */
-.rdm-button--fab:hover::after,
-.rdm-button--fab-small:hover::after,
-.rdm-button--fab-large:hover::after  { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 8%, transparent); opacity: 1; }
-.rdm-button--fab:active::after,
-.rdm-button--fab-small:active::after,
-.rdm-button--fab-large:active::after { background-color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 12%, transparent); opacity: 1; }
+:is(.rdm-button--elevated,
+    .rdm-button--filled,
+    .rdm-button--tonal,
+    .rdm-button--outlined,
+    .rdm-button--text,
+    .rdm-button--fab,
+    .rdm-button--fab-small,
+    .rdm-button--fab-large):active::after {
+    background-color: color-mix(in srgb, var(--layer, var(--md-sys-color-on-surface)) 12%, transparent);
+    opacity: 1;
+}

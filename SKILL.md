@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.16** - Rol destructivo en botones segun M3. Correccion de una desviacion conceptual: un boton destructivo NO es una sexta variante (M3 define cinco, segun Material Web), sino la asignacion del color role Error a cualquier variante. Se implemento como modificador ortogonal `rdm-button--destructive` con 4 combinaciones (text, outlined, tonal, filled) y exclusion explicita de FAB, que M3 prohibe para acciones destructivas. Para que el modificador funcionara se refactorizaron las state layers: cada variante declara `--layer` y un unico par de reglas `:is(...)` lo consume, en lugar de un par de reglas por variante con el token hardcodeado. Con fallback explicito para que una variante sin `--layer` falle visible y no en silencio. Ademas se corrigio el ejemplo de dialogo destructivo de esta misma doc, que usaba primary para el boton Eliminar, y los FAB de `buttons.php`, que incluian un icono delete prohibido por la spec
 - **v1.15** - Housekeeping: eliminados `css/tarjetas.css` (200 lineas) y `css/toolbar.css` (104 lineas), ambos con 0 referencias verificadas en todo el proyecto y ninguno importado. Sus prefijos de clase (`rdm-tarjeta*`, `rdm-toolbar--*`, `rdm-derechos`, `rdm-sys-corner--*`, `logo_img`) no aparecen en ningun `.php` ni `.css`. Los unicos matches eran falsos positivos de `rdm--contenedor-toolbar` (el contenedor de layout, otra clase) y de un icono de Material Symbols llamado toolbar. El proyecto queda con 0 CSS muertos
 - **v1.14** - Reconstruccion de `elevation.php` y resurreccion de `css/elevation.css` (estaba muerto). La version anterior mapeaba el tipo de card a los niveles de elevacion, lo cual es incorrecto: en M3 el tipo de card y el nivel de elevacion son ortogonales. Se elimino el concepto paralelo `rdm-sys-elevation--*` que duplicaba `rdm-card--*`. La pagina nueva demuestra los dos sistemas de profundidad de M3: elevacion por sombra (levels 0-5) y elevacion tonal (surface-container-lowest a highest), mas una tabla de que componente usa que nivel
 - **v1.13** - Large FAB segun M3 (96x96, radio 28dp, icono 36dp, elevacion level 3), incluido en los selectores de state layer y disabled. Se documenta tambien la spec de padding asimetrico de M3 verificada (sin icono 24/24, con icono 16 start / 24 end, gap 8dp) que el proyecto ya cumplia con el margen negativo del media
@@ -432,7 +433,7 @@ Diálogo centrado para advertencias, acciones críticas o informativas con icono
     </div>
     <div class="rdm-dialog--actions">
       <button type="button" class="rdm-button--text" data-dialog-close>Cancelar</button>
-      <button type="button" class="rdm-button--filled" data-dialog-close>Eliminar</button>
+      <button type="button" class="rdm-button--filled rdm-button--destructive" data-dialog-close>Eliminar</button>
     </div>
   </div>
 </dialog>
@@ -1378,12 +1379,64 @@ Ninguno de esos valores es un token de motion de M3, que son **50 / 100 / 250 / 
 
 Migrar la librería completa a los tokens de motion de M3 es un proyecto global aparte: toca al menos 5 archivos y afecta la percepción de toda la interfaz, así que conviene hacerlo con la librería auditada componente por componente.
 
+### Rol destructivo (M3) - v1.16
+
+**No es una sexta variante.** M3 define **cinco** tipos de boton (elevated, filled, tonal, outlined, text), confirmado en la documentacion oficial de Material Web: *"There are five types of common buttons: elevated, filled, filled tonal, outlined, and text."*
+
+Una accion destructiva es **cualquier variante cuyo color role se asigna a la paleta Error**. Por eso `rdm-button--destructive` es un **modificador de rol de color**, ortogonal a la variante, igual que `--icon-only` lo es del tamano:
+
+```html
+<button class="rdm-button--filled rdm-button--destructive">Eliminar</button>
+```
+
+#### Las 4 combinaciones
+
+| Variante + modificador | Container | Etiqueta e icono | Capa de estado (`--layer`) |
+|---|---|---|---|
+| `--text` + `--destructive` | transparent | `error` | `error` |
+| `--outlined` + `--destructive` | transparent | `error` | `error` |
+| `--tonal` + `--destructive` | `error-container` | `on-error-container` | `on-error-container` |
+| `--filled` + `--destructive` | `error` | `on-error` | `on-error` |
+
+El outlined destructivo sobreescribe tambien `border-color` a `error`. El rol del borde es independiente por diseno: Material Web expone `outline-color` como token separado justamente para que un modificador de rol pueda cambiarlo sin redeclarar el borde.
+
+#### Exclusiones
+
+| Variante | Por que no |
+|---|---|
+| `--fab`, `--fab-small`, `--fab-large` | La guia oficial de FAB lo prohibe: *"Avoid using a FAB for minor or destructive actions, such as: Archive or trash"* |
+| `--elevated` | M3 no define esta variante para roles de error |
+
+El texto de la guia esta citado en el propio `button.css` para que la regla no se "arregle" despues.
+
+#### Uso
+
+Una sola vez por pantalla, siempre acompanado de dialogo de confirmacion, y la etiqueta debe **nombrar la accion** (Eliminar, no Aceptar): el color no puede ser el unico portador del significado, por WCAG 1.4.1 (Use of Color).
+
+En el showroom (`buttons.php`) la seccion va **al final**, despues de FAB large, y no junto a las otras variantes. Es deliberado: al no ser una variante, no pertenece a la serie de las cinco, y de paso deja claro que no se aplica a los FAB que la preceden.
+
+#### Refactor de state layers (v1.16)
+
+Para que un modificador de rol funcionara, las state layers dejaron de llevar el token **hardcodeado por variante**. Ahora cada variante declara `--layer` junto a sus tokens de container y etiqueta, y hay **un solo par** de reglas `:is(...):hover::after` / `:active::after` que lo consume.
+
+Esto elimina la multiplicacion de reglas: antes cada nuevo rol obligaba a duplicar un par de `:hover`/`:active` por variante, con su token hardcodeado. Con `--layer`, un rol nuevo es **una linea** que sobreescribe la propiedad, y como el modificador nunca toca `opacity` ni `background-color`, no colisiona con las reglas de estado compartidas.
+
+El fallback `var(--layer, var(--md-sys-color-on-surface))` **no es decorativo**. Sin el, una variante futura que olvidara declarar `--layer` haria invalida la declaracion en tiempo de computacion, `background-color` caeria a `transparent` y el hover desapareceria **en silencio, sin error en consola**. Con el fallback se ve una capa incorrecta en vez de no ver nada.
+
+La especificidad de `:is()` con argumentos de clase es la de su argumento mas especifico, asi que `:is(...):hover::after` queda en `(0,2,1)`, igual que las reglas individuales que reemplaza. La cascada no cambio y los 8 botones auditados en v1.10 a v1.13 conservan su token exacto (verificado token por token).
+
+#### Corregido en el mismo commit
+
+- `SKILL.md` documentaba un dialogo destructivo cuyo boton `Eliminar` usaba `rdm-button--filled` con `primary`, mientras el icono de la misma pantalla si usaba `error` (`.rdm-dialog--icon.is-error`). Era un icono rojo de borrar junto a un boton morado de eliminar, y estaba en la documentacion, asi que se propagaba a quien copiara el ejemplo.
+- `buttons.php` tenia un `rdm-button--fab-large` con icono `delete` y `aria-label="Eliminar"`, exactamente el patron que M3 prohibe. Los demas FAB usaban `edit`, que tambien esta en la lista de evitar (acciones menores). Todos ahora usan iconos constructivos (`add`, `favorite`, `share`).
+
 ### Desviaciones pendientes
 
 | # | Desviacion | Nota |
 |---|---|---|
 | 1 | Motion sin tokens de M3 en toda la libreria | button.css ya unificado a 160ms, pero list.css usa 0.3s/0.15s, search.css tiene 240ms, y ninguno es un token de M3 (50/100/250/300/400/450/600ms) |
 | 2 | Dimensiones en `em` escalan en movil | `estilos.css:264` pone `body { font-size: 15px }` bajo 530px, asi que los 40dp se vuelven ~39px. Decision del proyecto, afecta a toda la libreria |
+| 3 | Target tactil de 48dp en icon button | M3 lo recomienda con visual de 40dp. No implementado |
 
 ---
 

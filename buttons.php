@@ -352,13 +352,14 @@
     <!-- FAB buttons -->
 
     <h1 class="rdm-sys-typography--display-medium">FAB buttons</h1>
+    <p class="rdm-sys-typography--body-large">M3 reserva el FAB para una accion constructiva y dominante (create, add, share, favorite, explore). Prohibe expresamente las acciones menores y destructivas: "Avoid using a FAB for minor or destructive actions, such as: Archive or trash". Por eso el showroom no incluye un FAB de eliminar, y <code>rdm-button--destructive</code> no se combina con esta variante.</p>
 
     <p>
         <!-- button -->
         <button class="rdm-button--fab">
             <div class="rdm-button--container">
                 <div class="rdm-button--media">
-                    <div class="rdm-button--icon"><span class="material-symbols-rounded">edit</span></div>
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
                 </div>
 
                 <div class="rdm-button--body">
@@ -371,7 +372,7 @@
         <button class="rdm-button--fab">
             <div class="rdm-button--container">
                 <div class="rdm-button--fab-media">
-                    <div class="rdm-button--icon"><span class="material-symbols-rounded">edit</span></div>
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
                 </div>
             </div>
         </button>
@@ -394,7 +395,7 @@
             <div class="rdm-button--container">
 
                 <div class="rdm-button--media">
-                    <div class="rdm-button--icon"><span class="material-symbols-rounded">edit</span></div>
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">add</span></div>
                 </div>
 
                 <div class="rdm-button--body">
@@ -415,10 +416,10 @@
     <p class="rdm-sys-typography--body-large">96x96, radio 28dp, icono 36dp y elevacion nivel 3. El large de M3 es cuadrado y solo lleva icono: para un FAB con etiqueta se usa el medium.</p>
 
     <p>
-        <button class="rdm-button--fab-large" aria-label="Editar">
+        <button class="rdm-button--fab-large" aria-label="Favorito">
             <div class="rdm-button--container">
                 <div class="rdm-button--media">
-                    <div class="rdm-button--icon"><span class="material-symbols-rounded">edit</span></div>
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">favorite</span></div>
                 </div>
             </div>
         </button>
@@ -431,14 +432,78 @@
             </div>
         </button>
 
-        <button class="rdm-button--fab-large" aria-label="Eliminar" disabled>
+        <button class="rdm-button--fab-large" aria-label="Compartir" disabled>
             <div class="rdm-button--container">
                 <div class="rdm-button--media">
-                    <div class="rdm-button--icon"><span class="material-symbols-rounded">delete</span></div>
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">share</span></div>
                 </div>
             </div>
         </button>
     </p>
+
+    <!-- Destructive buttons -->
+
+    <h1 class="rdm-sys-typography--display-medium">Destructive buttons</h1>
+    <p class="rdm-sys-typography--body-large">No es una sexta variante: M3 define cinco (elevated, filled, tonal, outlined, text). Es un modificador de rol de color que reasigna la variante a la paleta Error, por eso se combina con cualquiera de ellas. Se usa una sola vez por pantalla, siempre con dialogo de confirmacion, y la etiqueta nombra la accion porque el color no puede ser el unico indicio (WCAG 1.4.1).</p>
+
+    <p>
+        <button class="rdm-button--text rdm-button--destructive">
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">delete</span></div>
+                </div>
+                <div class="rdm-button--body">
+                    <span class="rdm-sys-typography--label-large">Eliminar</span>
+                </div>
+            </div>
+        </button>
+
+        <button class="rdm-button--outlined rdm-button--destructive">
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">delete</span></div>
+                </div>
+                <div class="rdm-button--body">
+                    <span class="rdm-sys-typography--label-large">Eliminar</span>
+                </div>
+            </div>
+        </button>
+
+        <button class="rdm-button--tonal rdm-button--destructive">
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">delete</span></div>
+                </div>
+                <div class="rdm-button--body">
+                    <span class="rdm-sys-typography--label-large">Eliminar</span>
+                </div>
+            </div>
+        </button>
+
+        <button class="rdm-button--filled rdm-button--destructive">
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">delete</span></div>
+                </div>
+                <div class="rdm-button--body">
+                    <span class="rdm-sys-typography--label-large">Eliminar</span>
+                </div>
+            </div>
+        </button>
+
+        <button class="rdm-button--filled rdm-button--destructive" disabled>
+            <div class="rdm-button--container">
+                <div class="rdm-button--media">
+                    <div class="rdm-button--icon"><span class="material-symbols-rounded">delete</span></div>
+                </div>
+                <div class="rdm-button--body">
+                    <span class="rdm-sys-typography--label-large">Eliminar</span>
+                </div>
+            </div>
+        </button>
+    </p>
+
+    <p class="rdm-sys-typography--body-large">No se combina con FAB ni con elevated. La guia oficial de FAB prohibe las acciones destructivas en un floating action button (archive or trash), y M3 no define la variante elevated para roles de error.</p>
 
     <br>
     <br>
