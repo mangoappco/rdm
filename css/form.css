@@ -4,11 +4,12 @@ FORMS
 Autor: Danny Estrada
 */
 
-/* Container */
+/* Container - sin margin auto: con width 100% los margenes laterales
+   automaticos son inertes, solo conserva el inferior. Mantener en sync
+   con card.css. */
 .rdm-form--container {
     display: flex;
     width: 100%;
-    margin: 0 auto;
     margin-bottom: 1em;
     box-sizing: border-box;
   }
@@ -19,7 +20,8 @@ Autor: Danny Estrada
 .rdm-form--outlined,
 .rdm-form--flat {
   border-radius: 0.75em;
-  margin-right: 0.5em;
+  /* Gutter en logico, igual que rdm-card--*. Mantener en sync. */
+  margin-inline-end: 0.5em;
   box-sizing: border-box;
   box-shadow: none;
   width: 100%;
@@ -42,11 +44,12 @@ Autor: Danny Estrada
   border: solid 0.0625em rgba(0, 0, 0, 0);
 }
 
-/* Outlined Form */
+/* Outlined Form - M3: borde outline-variant, igual que rdm-card--outlined.
+   Mantener en sync con card.css. */
 .rdm-form--outlined {
   background-color: var(--md-sys-color-surface);
   color: var(--md-sys-color-on-surface);
-  border: solid 0.0625em var(--md-sys-color-outline);
+  border: solid 0.0625em var(--md-sys-color-outline-variant);
 }
 
 /* Flat Form (sin borde ni sombra) */
@@ -56,12 +59,12 @@ Autor: Danny Estrada
   border: solid 0.0625em rgba(0, 0, 0, 0);
 }
 
-/* Eliminar el margen derecho del último hijo */
+/* Eliminar el margen del último hijo (en logico por RTL) */
 .rdm-form--container .rdm-form--elevated:last-child,
 .rdm-form--container .rdm-form--filled:last-child,
 .rdm-form--container .rdm-form--outlined:last-child,
 .rdm-form--container .rdm-form--flat:last-child {
-  margin-right: 0;
+  margin-inline-end: 0;
 }
 
 /* Modificador para apilar múltiples cards dentro del mismo form */
@@ -74,7 +77,7 @@ Autor: Danny Estrada
 .rdm-form--stacked .rdm-form--filled,
 .rdm-form--stacked .rdm-form--outlined,
 .rdm-form--stacked .rdm-form--flat {
-  margin-right: 0;
+  margin-inline-end: 0;
 }
 
 /* Headings dentro de form apilado — ritmo igual que h1→card en cards.php */
@@ -92,10 +95,12 @@ Autor: Danny Estrada
    porque el media va seguido de rdm-form--body en los 3 usos de forms.php
    y ninguna regla declara overflow hidden que recorte. */
 .rdm-form--media {
-  text-align: left;
+  text-align: start;
   background-color: var(--md-sys-color-secondary);
   color: var(--md-sys-color-on-secondary);
   width: 100%;
+  /* min-height 15em = decision del proyecto, no token M3. Ver nota en
+     rdm-card--media. Mantener en sync con card.css. */
   min-height: 15em;
   border-radius: 0.75em 0.75em 0 0;
   box-sizing: border-box; 
@@ -103,6 +108,8 @@ Autor: Danny Estrada
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  /* text-shadow sobre imagen es patron de Material 2 (ver nota en
+     rdm-card--media). Pendiente de rediseño, no se toca en v1.18. */
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -111,17 +118,21 @@ Autor: Danny Estrada
 /* Body */
 .rdm-form--body {
   padding: 0em 1em;
-  text-align: left;
+  text-align: start;
   box-sizing: border-box;
 }
 
-/* Action */
+/* Action - propiedades logicas igual que rdm-card--action-*. Mantener
+   en sync con card.css. */
 .rdm-form--action-left, 
 .rdm-form--action-center, 
 .rdm-form--action-right { 
   padding: 0em 1em;
-  text-align: left;
   box-sizing: border-box;
+}
+
+.rdm-form--action-left {
+  text-align: start;
 }
 
 .rdm-form--action-center {   
@@ -129,5 +140,5 @@ Autor: Danny Estrada
 }
 
 .rdm-form--action-right {   
-  text-align: right;
+  text-align: end;
 }

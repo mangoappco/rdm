@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.18** - Card segunda pasada: propiedades logicas RTL, borde outlined y documentacion. `card.css`, `form.css` y `cardlist.css` pasaron de `text-align: left/right` y `margin/padding-left/right` a `start/end/inline` (12 ocurrencias fisicas en 4 archivos, 0 restantes en el sistema card; en LTR el render es identico). Borde del outlined de `outline` a `outline-variant` (token verificado en ambos temas). `margin: 0 auto` inerte eliminado. `min-height: 15em` y `text-shadow` del media documentados como decision de proyecto y patron M2 respectivamente, sin tocar. Taxonomia de interaccion M3 documentada (las 174 cards son no interactivas, por eso no llevan state layer y no es bug) con la tabla de elevacion dinamica para futura referencia. El bloque CSS propuesto por analisis externo se descarto para aplicar: usaba clase base `.rdm-card` inexistente, convencion `__` con 0 ocurrencias en el proyecto, unidades px/rem contra una libreria 100% em, y dos `var()` a tokens inexistentes
 - **v1.17** - Auditoria de **Card** (9 archivos, 184 usos de `rdm-card--*`). Tres correcciones: `filter: blur(10)` sin unidad en `card.css` y `form.css` (CSS invalido, el navegador lo descartaba); `.rdm-card--elevated` usaba `surface` en vez de `surface-container-low`, el mismo bug que estaba reportado en los repos de Google (material-components-web #8203 y angular/components #29163); y `rdm-card--media` con radio en las 4 esquinas cuando siempre va seguido de `--body` y no hay `overflow: hidden` que lo recorte, ahora `0.75em 0.75em 0 0`. Se documentaron ademas el hallazgo estructural de shape (escala correcta sin consumidor, 0 tokens `--md-sys-shape-*`, 21 archivos hardcodeando su radio) y **dos retractaciones** de la propia auditoria: `textfield.css` con `4px` era el radio de un scrollbar, y `search.css` sin `border-radius: inherit` era un marcador de error de texto, no un state layer
 - **v1.16** - Rol destructivo en botones segun M3. Correccion de una desviacion conceptual: un boton destructivo NO es una sexta variante (M3 define cinco, segun Material Web), sino la asignacion del color role Error a cualquier variante. Se implemento como modificador ortogonal `rdm-button--destructive` con 4 combinaciones (text, outlined, tonal, filled) y exclusion explicita de FAB, que M3 prohibe para acciones destructivas. Para que el modificador funcionara se refactorizaron las state layers: cada variante declara `--layer` y un unico par de reglas `:is(...)` lo consume, en lugar de un par de reglas por variante con el token hardcodeado. Con fallback explicito para que una variante sin `--layer` falle visible y no en silencio. Ademas se corrigio el ejemplo de dialogo destructivo de esta misma doc, que usaba primary para el boton Eliminar, y los FAB de `buttons.php`, que incluian un icono delete prohibido por la spec
 - **v1.15** - Housekeeping: eliminados `css/tarjetas.css` (200 lineas) y `css/toolbar.css` (104 lineas), ambos con 0 referencias verificadas en todo el proyecto y ninguno importado. Sus prefijos de clase (`rdm-tarjeta*`, `rdm-toolbar--*`, `rdm-derechos`, `rdm-sys-corner--*`, `logo_img`) no aparecen en ningun `.php` ni `.css`. Los unicos matches eran falsos positivos de `rdm--contenedor-toolbar` (el contenedor de layout, otra clase) y de un icono de Material Symbols llamado toolbar. El proyecto queda con 0 CSS muertos
@@ -1513,7 +1514,7 @@ Los caracteres CJK que se habían colado antes en `landing.css` y `form.css` ya 
 |---|---|---|---|---|---|
 | `rdm-card--elevated` | `surface-container-low` | `on-surface` | `level1` | 12dp | v1.17 corregido (card y form) |
 | `rdm-card--filled` | `surface-variant` | `on-surface-variant` | ninguna | 12dp | pendiente de verificar |
-| `rdm-card--outlined` | `surface` | `on-surface` | borde `outline` | 12dp | correcto |
+| `rdm-card--outlined` | `surface` | `on-surface` | borde `outline-variant` | 12dp | v1.18 corregido (card y form) |
 | `rdm-card--flat` | `surface` | `on-surface` | ninguna | 12dp | extension del proyecto, no de M3 |
 
 M3 define **tres** tipos de card: elevated, filled y outlined. `flat` es una extension propia del proyecto, con un unico uso (`cards.php`). No es un bug, pero no existe en la spec.
@@ -1548,13 +1549,43 @@ Este bug estaba reportado en los propios repos de Google:
 
 Verificado en los **5 usos** del proyecto: 4 en `cards.php` y 1 en `cardlist.php`, los 5 con body debajo. Mismo fix aplicado a `rdm-form--media` (3 usos en `forms.php`) para que los dos archivos clon no queden inconsistentes.
 
+### Correcciones de v1.18
+
+**1. Propiedades fisicas a logicas (RTL).** `card.css`, `form.css` y `cardlist.css` usaban `text-align: left/right`, `margin-left/right` y `padding-left/right` sin ningun `start/end/inline` en toda la libreria (12 ocurrencias en 4 archivos). En RTL todo se alineaba al lado equivocado. Ahora el sistema card/form/cardlist es 100% logico: `start/end`, `margin-inline`, `padding-inline`, `margin-inline-end` para el gutter flex. Verificado: 0 propiedades fisicas restantes en los 3 archivos. En LTR el render es identico.
+
+El gutter flex (`margin-inline-end: 0.5em` + cancelacion en `:last-child`) tambien paso a logico. Sigue siendo complejidad muerta — los 28 containers tienen 1 card cada uno — pero al menos ahora es complejidad muerta correcta en RTL.
+
+**2. Borde del outlined a `outline-variant`.** El proyecto usaba `outline` (el rol fuerte, reservado para foco y enfasis). M3 pide `outline-variant` para el borde de la card outlined, y el token ya se usaba en `cardlist.css` para los divisores. Existe en ambos temas (`--md-sys-color-outline-variant` en `theme.light.css` y `theme.dark.css`).
+
+Nota de metodo: un grep anterior busco `--md-sys-outline-variant` sin el segmento `color` y dio "NO EXISTE". El nombre real es `--md-sys-color-outline-variant` y si existe. Error del chequeo, no del proyecto.
+
+**3. `margin: 0 auto` inerte eliminado.** Con `width: 100%` los margenes laterales automaticos no hacen nada. Solo conserva `margin-bottom: 1em`. En ambos clones.
+
+**4. `min-height: 15em` y `text-shadow` documentados, no tocados.** El `min-height` del media (240px) es decision del proyecto, no token M3: la spec no define altura fija para el media. Se conserva para que el media con `background-image` no colapse, y quedo anotado en el CSS. El `text-shadow: 1px 1px 2px` sobre imagen es patron de Material 2 — M3 usa scrim para legibilidad — pero cambiarlo es un rediseno visual, asi que queda como desviacion pendiente y no se toca en v1.18.
+
+**5. Bleed de `cardlist.css` a logico.** El truco bleed-to-edge (`margin` negativo + `padding` para llegar al borde de la card) usaba propiedades fisicas y se rompia en RTL. Ahora `margin-inline: -1em` y `padding-inline: 1em`, mas `margin-inline-end: 0` en el body de la lista.
+
+### Interaccion en cards (taxonomia M3)
+
+M3 clasifica las cards por interaccion, y eso explica por que `card.css` no tiene state layers **sin que sea un bug**:
+
+| Tipo | Comportamiento | State layer |
+|---|---|---|
+| No interactiva | Contenedor de lectura | Ninguno |
+| Single-target | Toda la card es clickeable | Sobre todo el contenedor (`on-surface` 8% hover / 12% pressed) |
+| Multi-target | La card no es clickeable, contiene elementos interactivos | Solo en los elementos internos |
+
+Las **174 cards del proyecto son no interactivas** (0 con `tabindex`, `role` o `onclick`), asi que estan en el tipo correcto y no les falta nada. Si alguna vez una card se vuelve clickeable, la elevacion dinamica de M3 es: elevated rest level1 / hover level2 / focus level1 / dragged level4; filled y outlined rest/hover/focus level0 / pressed level1 / dragged level3. Documentado aqui para no tener que redescubrirlo.
+
 ### Desviaciones pendientes
 
 | # | Desviacion | Nota |
 |---|---|---|
-| 1 | `rdm-card--filled` usa `surface-variant` | Las fuentes se contradicen: la documentacion de Android dice *"the surface variant color"*, Flutter dice `secondaryContainer`, y la spec actual de M3 sugiere la escala `surface-container-*`. **No se puede confirmar** con las fuentes accesibles, asi que no se toca |
+| 1 | `rdm-card--filled` usa `surface-variant` | Las fuentes se contradicen: la documentacion de Android dice *"the surface variant color"*, Flutter dice `secondaryContainer`, y la spec actual de M3 sugiere la escala `surface-container-*` (un analisis externo apunta a `surface-container-highest`, pero `highest` es el paso mas extremo de la escala y se reserva para elementos sobre superficie ya elevada, asi que `high` parece mas plausible). **No se puede confirmar** con las fuentes accesibles, asi que no se toca |
 | 2 | `rdm-card--flat` no existe en M3 | Extension del proyecto, 1 uso. Documentado, no eliminado |
-| 3 | Maquinaria de flex muerto en `--container` | `.rdm-card--container` es `display: flex` con hijos en `width: 100%` mas `margin-right: 0.5em` compensado por `:last-child`. Los **28 containers del proyecto tienen exactamente 1 card cada uno**, asi que el `margin-right` siempre se cancela. No hay bug visual, es complejidad muerta |
+| 3 | Maquinaria de flex muerto en `--container` | `.rdm-card--container` es `display: flex` con hijos en `width: 100%` mas gutter compensado por `:last-child`. Los **28 containers del proyecto tienen exactamente 1 card cada uno**, asi que el gutter siempre se cancela. No hay bug visual, es complejidad muerta (ahora en logico, v1.18) |
+| 4 | Padding vertical 0 en media/body/action | Hoy `padding: 0em 1em`, M3 pide 16dp en los cuatro lados. Cambiarlo altera la altura de las 184 cards y se decide mirando, no leyendo. **Pendiente de revision visual** |
+| 5 | `text-shadow` en el media es patron M2 | M3 usa scrim (capa surface con opacidad) para legibilidad sobre imagen. Cambiarlo es rediseno visual, pendiente |
 
 ### Dos retractaciones de la auditoria
 

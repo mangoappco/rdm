@@ -5,19 +5,20 @@ Autor: Danny Estrada
 Extiende rdm-card para contener listas sin padding lateral en los items
 */
 
-/* Card con lista interna: los items ocupan todo el ancho del body de la card */
+/* Card con lista interna: los items ocupan todo el ancho del body de la card.
+   Propiedades logicas (inline) para que el bleed-to-edge siga funcionando
+   en RTL. */
 .rdm-card--list .rdm-list--container {
     /* Margen negativo para compensar el padding del card body y llegar al borde. */
-    margin-left: -1em;
-    margin-right: -1em;
+    margin-inline: -1em;
     /* Padding propio para que el texto conserve la alineación de la card. */
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-inline: 1em;
 }
 
-/* El body de la lista no debe empujar el contenido con su margen lateral */
+/* El body de la lista no debe empujar el contenido con su margen lateral.
+   En RTL es el margen inline-end el que empuja, por eso va en logico. */
 .rdm-card--list .rdm-list--body {
-    margin-right: 0;
+    margin-inline-end: 0;
 }
 
 /* Separación vertical entre items de la lista interna */
