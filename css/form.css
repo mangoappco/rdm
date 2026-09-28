@@ -25,13 +25,14 @@ Autor: Danny Estrada
   width: 100%;
 }
 
-/* Elevated Form */
+/* Elevated Form - M3: mismo criterio que rdm-card--elevated. La elevacion
+   tonal se expresa con surface-container-low, no con surface plano, que no
+   daria contraste contra el fondo. Mantener en sync con card.css. */
 .rdm-form--elevated {
-  background-color: var(--md-sys-color-surface);
+  background-color: var(--md-sys-color-surface-container-low);
   color: var(--md-sys-color-on-surface);
   border: solid 0.0625em rgba(0, 0, 0, 0);
-  box-shadow: 
-    var(--md-sys-elevation-level1);
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 /* Filled Form */
@@ -87,19 +88,21 @@ Autor: Danny Estrada
 /* Anatomy */
 
 /* Media */
+/* Media - mismo criterio que rdm-card--media: solo esquinas superiores,
+   porque el media va seguido de rdm-form--body en los 3 usos de forms.php
+   y ninguna regla declara overflow hidden que recorte. */
 .rdm-form--media {
   text-align: left;
   background-color: var(--md-sys-color-secondary);
   color: var(--md-sys-color-on-secondary);
   width: 100%;
   min-height: 15em;
-  border-radius: 0.75em;
+  border-radius: 0.75em 0.75em 0 0;
   box-sizing: border-box; 
   padding: 0em 1em;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  filter: blur(10);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;

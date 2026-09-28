@@ -2,6 +2,7 @@
 
 ## Historial de Versiones
 
+- **v1.17** - Auditoria de **Card** (9 archivos, 184 usos de `rdm-card--*`). Tres correcciones: `filter: blur(10)` sin unidad en `card.css` y `form.css` (CSS invalido, el navegador lo descartaba); `.rdm-card--elevated` usaba `surface` en vez de `surface-container-low`, el mismo bug que estaba reportado en los repos de Google (material-components-web #8203 y angular/components #29163); y `rdm-card--media` con radio en las 4 esquinas cuando siempre va seguido de `--body` y no hay `overflow: hidden` que lo recorte, ahora `0.75em 0.75em 0 0`. Se documentaron ademas el hallazgo estructural de shape (escala correcta sin consumidor, 0 tokens `--md-sys-shape-*`, 21 archivos hardcodeando su radio) y **dos retractaciones** de la propia auditoria: `textfield.css` con `4px` era el radio de un scrollbar, y `search.css` sin `border-radius: inherit` era un marcador de error de texto, no un state layer
 - **v1.16** - Rol destructivo en botones segun M3. Correccion de una desviacion conceptual: un boton destructivo NO es una sexta variante (M3 define cinco, segun Material Web), sino la asignacion del color role Error a cualquier variante. Se implemento como modificador ortogonal `rdm-button--destructive` con 4 combinaciones (text, outlined, tonal, filled) y exclusion explicita de FAB, que M3 prohibe para acciones destructivas. Para que el modificador funcionara se refactorizaron las state layers: cada variante declara `--layer` y un unico par de reglas `:is(...)` lo consume, en lugar de un par de reglas por variante con el token hardcodeado. Con fallback explicito para que una variante sin `--layer` falle visible y no en silencio. Ademas se corrigio el ejemplo de dialogo destructivo de esta misma doc, que usaba primary para el boton Eliminar, y los FAB de `buttons.php`, que incluian un icono delete prohibido por la spec
 - **v1.15** - Housekeeping: eliminados `css/tarjetas.css` (200 lineas) y `css/toolbar.css` (104 lineas), ambos con 0 referencias verificadas en todo el proyecto y ninguno importado. Sus prefijos de clase (`rdm-tarjeta*`, `rdm-toolbar--*`, `rdm-derechos`, `rdm-sys-corner--*`, `logo_img`) no aparecen en ningun `.php` ni `.css`. Los unicos matches eran falsos positivos de `rdm--contenedor-toolbar` (el contenedor de layout, otra clase) y de un icono de Material Symbols llamado toolbar. El proyecto queda con 0 CSS muertos
 - **v1.14** - Reconstruccion de `elevation.php` y resurreccion de `css/elevation.css` (estaba muerto). La version anterior mapeaba el tipo de card a los niveles de elevacion, lo cual es incorrecto: en M3 el tipo de card y el nivel de elevacion son ortogonales. Se elimino el concepto paralelo `rdm-sys-elevation--*` que duplicaba `rdm-card--*`. La pagina nueva demuestra los dos sistemas de profundidad de M3: elevacion por sombra (levels 0-5) y elevacion tonal (surface-container-lowest a highest), mas una tabla de que componente usa que nivel
@@ -214,7 +215,7 @@ input.addEventListener('menu-open', () => {
 --md-sys-color-on-surface-variant: /* Placeholder e iconos secundarios */
 ```
 
-> **Nota (v1.8)**: las elevaciones de M3 **no están tokenizadas** en `css/md/tokens.css`. Cada CSS define su `box-shadow` literal. Los tokens `--md-sys-elevation-level1..5` quedan pendientes de añadirse a `tokens.css` para eliminar la duplicación.
+> **Nota (v1.8, resuelta en v1.11)**: esta nota decía que las elevaciones de M3 no estaban tokenizadas y que `--md-sys-elevation-level1..5` quedaban pendientes. **Ya se resolvió**: los tokens existen en `tokens.css` y las sombras literales de Material 2 fueron reemplazadas en `button.css`, `card.css` y `form.css`. Se conserva el texto original por historial.
 
 ### BEM Structure
 
@@ -1502,6 +1503,95 @@ Resultado: **0 CSS muertos** en el proyecto.
 Escaneo de todo el proyecto (`.php`, `.css`, `.js`, `.md`) contra los rangos CJK, hangul y kana. Se encontro **1 solo** caracter espurio, ya commiteado en HEAD: un `U+D3ED` coreano dentro de la nota de motion, que partia la frase "conviene hacerlo con la libreria auditada". Eliminado.
 
 Los caracteres CJK que se habían colado antes en `landing.css` y `form.css` ya estaban resueltos. Metodo de deteccion reutilizable: leer los bytes con `[System.IO.File]::ReadAllBytes` y decodificar con `[System.Text.Encoding]::UTF8.GetString`, nunca con `Get-Content` sin `-Encoding UTF8` (la consola de PowerShell corrompe los acentos en la salida pero no en el archivo).
+## Card (card.css, form.css)
+
+`rdm-card--*` se usa en **9 archivos y 184 veces**, asi que es el componente con mayor superficie de la libreria despues de los botones. `form.css` es un clon con otro prefijo, asi que casi todo lo de card aplica ahi.
+
+### Las 4 variantes
+
+| Clase | Container | Etiqueta | Sombra | Radio | Estado |
+|---|---|---|---|---|---|
+| `rdm-card--elevated` | `surface-container-low` | `on-surface` | `level1` | 12dp | v1.17 corregido (card y form) |
+| `rdm-card--filled` | `surface-variant` | `on-surface-variant` | ninguna | 12dp | pendiente de verificar |
+| `rdm-card--outlined` | `surface` | `on-surface` | borde `outline` | 12dp | correcto |
+| `rdm-card--flat` | `surface` | `on-surface` | ninguna | 12dp | extension del proyecto, no de M3 |
+
+M3 define **tres** tipos de card: elevated, filled y outlined. `flat` es una extension propia del proyecto, con un unico uso (`cards.php`). No es un bug, pero no existe en la spec.
+
+### Correcciones de v1.17
+
+**`card.css` y `form.css` son clones. Todo cambio en uno se aplica en el otro.**
+
+No es una recomendacion, es una regla del proyecto: comparten la misma estructura de 4 variantes, las mismas propiedades y los mismos tokens, solo cambia el prefijo. En v1.17 se corrigio `card.css` y se olvido `form.css`, y el sintoma fue que la elevated card salia con fondo gris claro mientras la elevated form seguia con el color anterior. Lo detecto la revision visual, no los tests: los dos archivos pasaron sintaxis y no habia forma de que un chequeo automatico lo notara.
+
+Por eso el fix se hizo en los 3 casos, no solo en card:
+
+| Correccion | card.css | form.css |
+|---|---|---|
+| Elevated a `surface-container-low` | si | si |
+| `filter: blur(10)` sin unidad | si | si |
+| Radio del media solo arriba | si | si |
+
+Chequeo de paridad reproducible (compara `background-color`, `color`, `box-shadow` y `border-radius` de las 4 variantes entre ambos archivos): **0 divergencias**.
+
+**1. `filter: blur(10)` sin unidad.** En `card.css` y `form.css`. `filter: blur()` exige unidad, asi que el navegador descartaba la declaracion entera. Ademas difuminar la imagen de la card no tenia sentido: era un resto de un efecto skeleton sin terminar. Ademas `blur()` es una funcion de CSS, no un token: el patron correcto seria `var(--md-sys-motion-...)` o simplemente no aplicarlo.
+
+Ojo con el grep de verificacion: `Select-String -Pattern 'filter:\s*blur'` tambien matchea `backdrop-filter: blur(4px)` de `dialog.css`, porque `filter:` es subcadena de `backdrop-filter:`. Los 2 que quedan son `backdrop-filter` **con** unidad y son validos. Hay que anclar el patron con `(?<!-)` o buscar `filter:` al inicio de propiedad.
+
+**2. Elevated usaba `surface` en vez de `surface-container-low`.** Es el mismo criterio que ya usa `rdm-button--elevated`: la elevacion tonal se expresa con el color del contenedor, no solo con la sombra. Con `surface` plano no habia contraste entre la card y el fondo de la pagina.
+
+Este bug estaba reportado en los propios repos de Google:
+- `material-components/material-components-web` #8203: *"[card] m3 Elevated card uses wrong surface color"*, con la observacion *"There is no contrast between an elevated card and the app background color"*
+- `angular/components` #29163, corregido en el PR #29835 *"fix(material/card): elevated card container color"*
+
+**3. `rdm-card--media` con radio en las 4 esquinas.** El media es siempre el primer hijo de la card y va seguido de `--body`, y ninguna regla declara `overflow: hidden` que lo recorte. Con radio abajo se veia el fondo de la card asomando en esas dos esquinas. Ahora `0.75em 0.75em 0 0`.
+
+Verificado en los **5 usos** del proyecto: 4 en `cards.php` y 1 en `cardlist.php`, los 5 con body debajo. Mismo fix aplicado a `rdm-form--media` (3 usos en `forms.php`) para que los dos archivos clon no queden inconsistentes.
+
+### Desviaciones pendientes
+
+| # | Desviacion | Nota |
+|---|---|---|
+| 1 | `rdm-card--filled` usa `surface-variant` | Las fuentes se contradicen: la documentacion de Android dice *"the surface variant color"*, Flutter dice `secondaryContainer`, y la spec actual de M3 sugiere la escala `surface-container-*`. **No se puede confirmar** con las fuentes accesibles, asi que no se toca |
+| 2 | `rdm-card--flat` no existe en M3 | Extension del proyecto, 1 uso. Documentado, no eliminado |
+| 3 | Maquinaria de flex muerto en `--container` | `.rdm-card--container` es `display: flex` con hijos en `width: 100%` mas `margin-right: 0.5em` compensado por `:last-child`. Los **28 containers del proyecto tienen exactamente 1 card cada uno**, asi que el `margin-right` siempre se cancela. No hay bug visual, es complejidad muerta |
+
+### Dos retractaciones de la auditoria
+
+Registradas porque el valor de documentarlas es que no se repitan:
+
+**`textfield.css` con `4px` — falso positivo.** Se reporto como un `border-radius` en px donde la libreria usa `em`. No lo es: `textfield.css:297` es `textarea::-webkit-scrollbar-thumb`, el radio del scrollbar. No hay ningun `border-radius` en px en textfield.
+
+**`search.css` sin `border-radius: inherit` — falso positivo.** Se reporto que su pseudo-elemento sin `border-radius: inherit` haria desbordar un state layer. Es `.rdm-search--wrapper.has-error .rdm-search--support::before { content: '? ' }`, un marcador de error de texto. `search.css` no tiene ningun state layer, asi que no hay nada que desbordar.
+
+Ninguno de los dos era bug. La leccion: verificar el contexto antes de catalogar.
+
+### Shape: existe la escala, no tiene consumidor
+
+`shape.css` define los 11 radios de la escala de M3 (0, 4, 8, 12, 16, 28dp, full, mas las variantes direccionales) y **los 11 valores son correctos**. El problema es que nada los usa:
+
+| Verificacion | Resultado |
+|---|---|
+| `rdm-sys-shape--corner-*` fuera de `shapes.php` | 0 |
+| Tokens `--md-sys-shape-*` en `tokens.css` | **0, la capa no existe** |
+| Componentes que hardcodean su propio radio | 21 archivos |
+
+Los valores hardcodeados coinciden numericamente con la escala, que es exactamente por lo que nadie lo noto: no hay nada roto visualmente. Lo que falta es el contrato, porque cambiar la escala no propagaria a los 21 archivos y no se puede tematizar.
+
+**Valores fuera de la escala:**
+
+| Archivo | Valor | dp | Problema |
+|---|---|---|---|
+| `badge.css` | `0.3125em` | 5dp | No existe en la escala de M3 |
+| `tab.css` | `0.1875em` | 3dp | No existe en la escala de M3 |
+| `landing.css` | 8/12/16/20/28px | — | Unico archivo que usa `px` en vez de `em` |
+
+**Dos puntos sin resolver contra la spec:**
+
+- **Text field: 4dp u 8dp.** La spec primaria de M3 es JS-rendered y no se puede leer. Una resolución de referencia sostiene que el filled lleva 4dp solo arriba (la base es plana por la línea de indicador) y el outlined 8dp en las 4 esquinas, lo que haria que el `rdm-textfield--outlined` del proyecto, hoy a 4dp, este equivocado. **No se cambia sin poder leer la spec.** El proyecto solo tiene la variante outlined; no existe `--filled`.
+- **`extraLarge`: 28dp o 24dp.** Compose define `extraLarge = 24.dp`, la web de M3 usa 28dp. El proyecto usa 28dp.
+
+**Nota sobre la tabla de mapeo de formas por componente:** circula al menos un error al afirmar *card = 16dp (corner-large)*. Las fuentes convergen en **12dp (corner-medium)** para cards, y el proyecto ya tiene 12dp. Aplicar esa tabla habria roto un componente correcto. Los botones, en cambio, **ya son pila**: `button { border-radius: 20em }` en `button.css:9` es efectivamente `corner-full`, que es lo que M3 pide.
 ## Componentes Relacionados
 
 ### Empty State
